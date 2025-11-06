@@ -9,7 +9,9 @@ def collect():
     print(f"\n {datetime.now()}")
     for src, func in [("VNExpress", vne), ("Lao Động", ld), ("Tuổi Trẻ", tt)]:
         print(f" {src}")
+        
         for art in func():
+            
             save_article(art["title"], art["link"], art["content"], art["source"])
 
 collect()
