@@ -16,8 +16,7 @@ def save_article(title, link, content, source):
     conn.close()
     
 # if __name__ == "__main__":
-#     # === THÊM CODE TEST Ở ĐÂY ===
-#     print("🔍 TEST SCRAPER TỪ DB.PY:")
+#     print(" TEST SCRAPER TỪ DB.PY:")
 #     from scrapers.vnexpress_scraper import get_articles as vne
     
 #     articles = vne()
@@ -33,7 +32,7 @@ def save_article(title, link, content, source):
 #     cur.execute("SELECT id, title, link FROM articles ORDER BY id DESC LIMIT 10")
 #     rows = cur.fetchall()
 
-#     print("\n📚 10 bài gần nhất trong cơ sở dữ liệu:\n")
+#     print("\n 10 bài gần nhất trong cơ sở dữ liệu:\n")
 #     for i, (id, title, link) in enumerate(rows, 1):
 #         print(f"{i}. {title}\n   {link}\n")
 

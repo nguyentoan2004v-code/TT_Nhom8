@@ -7,7 +7,6 @@ def get_articles():
     soup = BeautifulSoup(response.content, 'html.parser')
     articles = []
     
-    # Tìm tất cả thẻ h2, h3 có class chứa 'title'
     title_tags = soup.find_all(['h1','h2', 'h3'], class_=lambda x: x and 'title' in x)
     
     for tag in title_tags[:10]:  # Lấy 10 bài đầu
@@ -28,3 +27,15 @@ def get_articles():
                 })
     
     return articles
+def get_article_content(article_url):
+    try:
+        response = requests.get(article_url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        content_div = soup.find('div', class_='fck_detail')
+        if content_div:
+            return content_div.text.strip()
+        else:
+            return "Không có nội dung"
+    except:
+        return "Lỗi khi lấy nội dung"
