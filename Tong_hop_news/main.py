@@ -1,13 +1,13 @@
 import time, schedule
 from datetime import datetime
 from scrapers.vnexpress_scraper import get_articles as vne
-from scrapers.laodong_scraper import get_articles as ld
+from scrapers.haituh_scraper import get_articles as haitu
 from scrapers.tuoitre_scraper import get_articles as tt
 from db import save_article
 
 def collect():
     print(f"\n {datetime.now()}")
-    for src, func in [("VNExpress", vne), ("Lao Động", ld), ("Tuổi Trẻ", tt)]:
+    for src, func in [("VNExpress", vne), ("24h", haitu), ("Tuổi Trẻ", tt)]:
         print(f" {src}")
         
         for art in func():

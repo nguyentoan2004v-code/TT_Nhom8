@@ -9,7 +9,7 @@ def get_articles():
     
     title_tags = soup.find_all(['h1','h2', 'h3'], class_=lambda x: x and 'title' in x)
     
-    for tag in title_tags[:10]:  # Lấy 10 bài đầu
+    for tag in title_tags[:5]: 
         link_tag = tag.find('a')
         if link_tag:
             title = link_tag.get('title') or link_tag.text.strip()
@@ -22,7 +22,7 @@ def get_articles():
                 articles.append({
                     'title': title,
                     'link': link,
-                    'content': '',
+                    'content': get_article_content(link),
                     'source': 1
                 })
     
