@@ -7,7 +7,7 @@ def get_articles():
     soup = BeautifulSoup(response.content, 'html.parser')
     articles = []
     
-    # Tìm các thẻ tiêu đề của 24h
+    
     title_tags = soup.find_all(['h1','h2', 'h3'], class_='lh-100')
     
     for tag in title_tags[:5]:

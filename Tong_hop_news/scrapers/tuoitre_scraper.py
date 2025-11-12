@@ -7,7 +7,7 @@ def get_articles():
     soup = BeautifulSoup(response.content, 'html.parser')
     articles = []
     
-    # Thử với class box-title-text
+    
     title_tags = soup.find_all(['h1','h2', 'h3'], class_='box-title-text')
     
     for tag in title_tags[:5]:
