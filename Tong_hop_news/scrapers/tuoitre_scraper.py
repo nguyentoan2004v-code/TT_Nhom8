@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 
 def get_articles():
     url = "https://tuoitre.vn/"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
+    }
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
     articles = []
@@ -24,7 +27,7 @@ def get_articles():
                     'title': title,
                     'link': link,
                     'content': get_article_content(link),
-                    'source': 3
+                    'source': ''
                 })
     
     return articles
@@ -36,7 +39,7 @@ def get_article_content(article_url):
         
         content_div = soup.find('div', class_='detail-content')
         if content_div:
-            return content_div.text.strip()
+            return content_div.get_text(separator='\n', strip=True)
         else:
             return "Không có nội dung"
     except:

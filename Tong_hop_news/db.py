@@ -3,38 +3,46 @@ import mysql.connector
 def get_conn():
     return mysql.connector.connect(host="localhost", user="root", password="", database="news_db")
 
-def save_article(title, link, content, source):
-    conn = get_conn()
+def get_or_create_source_id(conn, source_name):
+    """Lấy ID của nguồn dựa trên tên; nếu chưa có, chèn mới và trả về ID."""
     cur = conn.cursor()
+    cur.execute("SELECT id FROM sources WHERE name = %s", (source_name,))
+    result = cur.fetchone()
+    
+    if result:
+        source_id = result[0]
+    else:
+        cur.execute("INSERT INTO sources (name) VALUES (%s)", (source_name,))
+        conn.commit()
+        source_id = cur.lastrowid
+        
+    cur.close()
+    return source_id
+
+def save_article(title, link, content, source_name):
+    """Lưu bài báo. source_name là TÊN NGUỒN."""
+    conn = get_conn()
+    
+    source_id = get_or_create_source_id(conn, source_name)
+    
+    if source_id is None:
+        conn.close()
+        print("Lỗi: Không thể lấy hoặc tạo ID nguồn.")
+        return
+
+    cur = conn.cursor()
+    
+    # Kiểm tra trùng lặp
     cur.execute("SELECT id FROM articles WHERE link=%s", (link,))
     if not cur.fetchone():
+        # Chèn bài báo sử dụng source_id hợp lệ
         cur.execute("INSERT INTO articles (title, link, content, source_id) VALUES (%s,%s,%s,%s)",
-                    (title, link, content, source))
+                    (title, link, content, source_id)) # Dùng source_id
         conn.commit()
-        print( title)
+        print(title)
+        
     cur.close()
     conn.close()
-    
-# if __name__ == "__main__":
-#     print(" TEST SCRAPER TỪ DB.PY:")
-#     from scrapers.vnexpress_scraper import get_articles as vne
-    
-#     articles = vne()
-#     print(f"Số bài từ VNExpress: {len(articles)}")
-#     for i, art in enumerate(articles[:2]):
-#         print(f"Title: '{art['title']}'")
-#         print(f"Link: {art['link']}")
-#         print("---")
+
     
 
-#     conn = get_conn()
-#     cur = conn.cursor()
-#     cur.execute("SELECT id, title, link FROM articles ORDER BY id DESC LIMIT 10")
-#     rows = cur.fetchall()
-
-#     print("\n 10 bài gần nhất trong cơ sở dữ liệu:\n")
-#     for i, (id, title, link) in enumerate(rows, 1):
-#         print(f"{i}. {title}\n   {link}\n")
-
-#     cur.close()
-#     conn.close()

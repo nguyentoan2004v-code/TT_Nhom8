@@ -3,6 +3,10 @@ from bs4 import BeautifulSoup
 
 def get_articles():
     url = "https://vnexpress.net"
+    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
+    }
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
     articles = []
@@ -23,7 +27,7 @@ def get_articles():
                     'title': title,
                     'link': link,
                     'content': get_article_content(link),
-                    'source': 1
+                    'source': ''
                 })
     
     return articles
@@ -32,9 +36,13 @@ def get_article_content(article_url):
         response = requests.get(article_url)
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        content_div = soup.find('div', class_='fck_detail')
+        content_div = soup.find('article', class_='fck_detail')
+        
+        if not content_div:
+            content_div = soup.find('div', class_='fck_detail')
+        
         if content_div:
-            return content_div.text.strip()
+            return content_div.get_text(separator='\n', strip=True)
         else:
             return "Không có nội dung"
     except:
