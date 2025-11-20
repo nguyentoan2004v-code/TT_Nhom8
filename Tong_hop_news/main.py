@@ -1,4 +1,3 @@
-import time, schedule
 from datetime import datetime
 from scrapers.vnexpress_scraper import get_articles as vne
 from scrapers.haituh_scraper import get_articles as haitu
@@ -12,11 +11,7 @@ def collect():
         
         for art in func():
             
-            save_article(art["title"], art["link"], art["content"], art["source"])
+            save_article(art["title"], art["link"], art["content"], art["source"],art["published_date"])
 
 collect()
-schedule.every().day.at("08:00").do(collect)
-print(" Chờ đến 08:00 mỗi ngày để tự động lấy tin...")
-while True:
-    schedule.run_pending()
-    time.sleep(30)
+

@@ -1,4 +1,5 @@
 import requests
+import datetime
 from bs4 import BeautifulSoup
 
 def get_articles():
@@ -23,11 +24,13 @@ def get_articles():
                 link = 'https://www.24h.com.vn' + link
             
             if title and link:
+                content, published_date = get_article_content(link)
                 articles.append({
                     'title': title,
                     'link': link,
-                    'content': get_article_content(link),
-                    'source': ''
+                    'content': content,
+                    'source': '24h',
+                    'published_date': published_date
                 })
     
     return articles
@@ -37,14 +40,30 @@ def get_article_content(article_url):
         response = requests.get(article_url)
         soup = BeautifulSoup(response.content, 'html.parser')
         
+        published_date = None
+        date_tag = soup.find('time', class_='cate-24h-foot-arti-deta-cre-post')
+        
+        if date_tag:
+            date_text = date_tag.text.strip() 
+            
+            try:
+                
+                date_time_str = date_text.split('ngày ')[-1].split(' (GMT')[0].strip()
+                
+                dt_object = datetime.datetime.strptime(date_time_str, '%d/%m/%Y %I:%M %p')
+                published_date = dt_object.strftime('%Y-%m-%d %H:%M:%S')
+                    
+            except :
+               
+                published_date = None
+        
      
         content_div = soup.find('div', class_='cms-body') or \
                       soup.find('article') or \
                       soup.find('div', class_='content-detail')
         
-        if content_div:
-            return content_div.get_text(separator='\n', strip=True)
-        else:
-            return "Không có nội dung"
+        content= content_div.get_text(separator='\n', strip=True)
+        return content, published_date
+        
     except :
         return "Lỗi khi lấy nội dung"

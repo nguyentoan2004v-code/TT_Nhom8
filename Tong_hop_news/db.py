@@ -19,7 +19,7 @@ def get_or_create_source_id(conn, source_name):
     cur.close()
     return source_id
 
-def save_article(title, link, content, source_name):
+def save_article(title, link, content, source_name,published_date):
     """Lưu bài báo. source_name là TÊN NGUỒN."""
     conn = get_conn()
     
@@ -32,12 +32,12 @@ def save_article(title, link, content, source_name):
 
     cur = conn.cursor()
     
-    # Kiểm tra trùng lặp
+    
     cur.execute("SELECT id FROM articles WHERE link=%s", (link,))
     if not cur.fetchone():
-        # Chèn bài báo sử dụng source_id hợp lệ
-        cur.execute("INSERT INTO articles (title, link, content, source_id) VALUES (%s,%s,%s,%s)",
-                    (title, link, content, source_id)) # Dùng source_id
+       
+        cur.execute("INSERT INTO articles (title, link, content, source_id,published_date) VALUES (%s,%s,%s,%s,%s)",
+                    (title, link, content, source_id,published_date)) 
         conn.commit()
         print(title)
         
