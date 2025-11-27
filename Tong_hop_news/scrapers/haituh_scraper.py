@@ -13,23 +13,23 @@ def get_articles():
         candidates = [h.find('a') for h in soup.find_all(['h2', 'h3', 'h4']) if h.find('a')]
         seen = set()
         count = 0
-        
         for link_tag in candidates:
             if count >= 6: break
             href = link_tag.get('href')
             title = link_tag.get('title') or link_tag.text.strip()
             
-            if href and '.html' in href and len(title) > 15 and href not in seen:
-                seen.add(href)
-                if not href.startswith('http'): href = 'https://www.24h.com.vn' + href
-                
-                content, published_date, image_url = get_article_content(href, headers)
-                if content:
-                    articles.append({
-                        'title': title, 'link': href, 'content': content,
-                        'source': '24h', 'published_date': published_date, 'image_url': image_url
-                    })
-                    count += 1
+            if href and len(title) > 10:
+                if href not in seen and 'du-bao-thoi-tiet' not in href:
+                    seen.add(href)
+                    if not href.startswith('http'): href = 'https://www.24h.com.vn' + href
+                    
+                    content, published_date, image_url = get_article_content(href, headers)
+                    if content and len(content) > 100:
+                        articles.append({
+                            'title': title, 'link': href, 'content': content,
+                            'source': '24h', 'published_date': published_date, 'image_url': image_url
+                        })
+                        count += 1
         return articles
     except: return []
 
@@ -38,31 +38,62 @@ def get_article_content(article_url, headers):
         response = requests.get(article_url, headers=headers, timeout=10)
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # DỌN RÁC (Quan trọng cho 24h)
-        for tag in soup.find_all(['script', 'style', 'iframe', 'video']): tag.decompose()
-        for div in soup.find_all('div', class_=['viewVideoPlay', 'video-content', 'banner-ads', 'baiviet-lienquan']): div.decompose()
+        # 1. DỌN RÁC CỰC MẠNH
+        for tag in soup.find_all(['script', 'style', 'iframe', 'video', 'object', 'center', 'button', 'input']): tag.decompose()
+        rac_classes = [
+            'viewVideoPlay', 'video-content', 'banner-ads', 'zone-ad', 
+            'baiviet-lienquan', 'bv-lienquan', 'btn-link-ads', 'not-in-view', 'box-tin-lien-quan'
+        ]
+        for div in soup.find_all(class_=rac_classes): div.decompose()
+
+        # 2. META & DATE
+        image_url = None
+        meta_img = soup.find('meta', property='og:image')
+        if meta_img: image_url = meta_img.get('content')
 
         published_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        date_tag = soup.find('div', class_='cate-24h-foot-arti-deta-cre-post')
+        if date_tag:
+            try:
+                txt = date_tag.text.strip()
+                clean_date = txt.split(',')[-1].replace('ngày', '').split('(GMT')[0].strip()
+                dt = datetime.datetime.strptime(clean_date, '%d/%m/%Y %I:%M %p')
+                published_date = dt.strftime('%Y-%m-%d %H:%M:%S')
+            except: pass
         
-        content_div = soup.find('article', id='article_body') or soup.find('div', id='article_body')
-        image_url = None
-        html_content = ""
+        # 3. XỬ LÝ NỘI DUNG (Tái cấu trúc HTML)
+        sapo = soup.find('h2', class_='baiviet-sapo')
+        body = soup.find('article', id='article_body') or soup.find('div', id='article_body')
+        
+        full_html = ""
+        if sapo: full_html += f'<p style="font-weight:bold; font-size:1.1em;">{sapo.get_text().strip()}</p>'
 
-        if content_div:
-            first_img = content_div.find('img')
-            if first_img: image_url = first_img.get('data-src') or first_img.get('src')
+        if body:
+            # Duyệt qua từng thẻ con để xây dựng lại HTML sạch
+            # (Cách này tránh được việc lấy nhầm các div rác còn sót lại)
+            for el in body.descendants:
+                if el.name == 'p':
+                    text = el.get_text().strip()
+                    # Bỏ dòng rác
+                    if "Nguồn:" in text or "Theo:" in text: continue
+                    
+                    # Xử lý ảnh trong P
+                    img = el.find('img')
+                    if img:
+                        src = img.get('data-original') or img.get('src')
+                        if src and 'icon' not in src and 'banner' not in src:
+                            caption = img.get('alt') or ""
+                            full_html += f'<figure class="text-center"><img src="{src}" class="img-fluid rounded" alt="{caption}"><figcaption class="text-muted small fst-italic">{caption}</figcaption></figure>'
+                    elif text:
+                        full_html += f'<p>{text}</p>'
+                
+                elif el.name in ['h2', 'h3', 'h4']:
+                    # Giữ lại tiêu đề phụ
+                    full_html += f'<{el.name} class="fw-bold mt-3 mb-2">{el.get_text().strip()}</{el.name}>'
+                
+                elif el.name == 'table':
+                    # Giữ lại bảng (giá vàng, tỷ số)
+                    full_html += str(el)
 
-            # Quét nội dung
-            for element in content_div.descendants:
-                if element.name == 'p':
-                    img = element.find('img')
-                    if img: # Nếu p chứa ảnh
-                        src = img.get('data-src') or img.get('src')
-                        html_content += f'<figure class="article-image"><img src="{src}"></figure>'
-                    elif element.get_text().strip(): # Nếu p chứa chữ
-                        html_content += str(element)
-                elif element.name in ['h2', 'h3']:
-                    html_content += str(element)
-
-        return html_content, published_date, image_url
+        return full_html, published_date, image_url
     except: return None, None, None

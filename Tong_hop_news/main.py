@@ -7,13 +7,14 @@ from db import save_article, get_conn, get_category_id_by_name, add_article_cate
 # TỪ ĐIỂN PHÂN LOẠI
 KEYWORDS = {
     "Thể thao": ["bóng đá", "v-league", "hlv", "cầu thủ", "đội tuyển", "seagames", "world cup", "thể thao", "trận đấu", "bàn thắng", "messi", "ronaldo"],
-    "Giáo dục": ["học sinh", "sinh viên", "đại học", "giáo dục", "trường học", "thi tốt nghiệp", "bộ giáo dục", "thầy cô", "học phí"],
+    "Giáo dục": ["học sinh", "sinh viên", "đại học", "giáo dục", "trường học", "thi tốt nghiệp", "bộ giáo dục", "thầy cô", "học phí", "tuyển sinh"],
     "Pháp luật": ["công an", "bắt giữ", "khởi tố", "tội phạm", "án mạng", "tòa án", "vi phạm", "trộm cắp", "điều tra", "cảnh sát", "xét xử", "tù"],
     "Kinh doanh": ["chứng khoán", "ngân hàng", "tỷ giá", "doanh nghiệp", "kinh tế", "lãi suất", "thị trường", "vàng", "bất động sản", "xăng dầu", "usd", "tài chính"],
     "Công nghệ": ["smartphone", "ai", "trí tuệ nhân tạo", "apple", "samsung", "công nghệ", "ứng dụng", "phần mềm", "virus", "chatgpt", "iphone"],
     "Sức khỏe": ["bệnh viện", "bác sĩ", "ung thư", "covid", "sức khỏe", "y tế", "thuốc", "phẫu thuật", "virus", "dinh dưỡng", "ngộ độc"],
     "Giải trí": ["hoa hậu", "ca sĩ", "diễn viên", "showbiz", "nghệ sĩ", "phim", "nhạc", "concert", "người mẫu"],
-    "Thế giới": ["mỹ", "nga", "ukraine", "trung quốc", "tổng thống", "quân sự", "liên hợp quốc", "chiến sự", "israel", "bầu cử"]
+    "Chính trị - Xã hội": ["chính phủ", "thủ tướng", "bộ trưởng", "nghị định", "quy hoạch", "dự án", "giao thông", "thời tiết", "mưa lũ"],
+    "Đời sống": ["du lịch", "ẩm thực", "gia đình", "tình yêu", "mẹo vặt"]
 }
 
 def classify_news(title):
