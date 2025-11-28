@@ -27,7 +27,6 @@ class NewsController extends Controller
         
         $query->orderBy('id', 'desc');
         $articles = $query->paginate(15)->appends($request->query());
-        
         // Lấy dữ liệu cho Menu và Sidebar
         $categories = Category::all(); 
         $sources = Source::all(); // <--- Dòng này gây lỗi nếu thiếu import ở trên

@@ -3,6 +3,7 @@ import datetime
 from bs4 import BeautifulSoup
 
 def get_articles():
+    source_name = "24h"
     url = "https://www.24h.com.vn/"
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'}
     try:
@@ -10,6 +11,7 @@ def get_articles():
         soup = BeautifulSoup(response.content, 'html.parser')
         articles = []
         
+        # Tìm link bài viết
         candidates = [h.find('a') for h in soup.find_all(['h2', 'h3', 'h4']) if h.find('a')]
         seen = set()
         count = 0
@@ -38,15 +40,16 @@ def get_article_content(article_url, headers):
         response = requests.get(article_url, headers=headers, timeout=10)
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # 1. DỌN RÁC CỰC MẠNH
+        # 1. DỌN RÁC KỸ THUẬT
         for tag in soup.find_all(['script', 'style', 'iframe', 'video', 'object', 'center', 'button', 'input']): tag.decompose()
         rac_classes = [
             'viewVideoPlay', 'video-content', 'banner-ads', 'zone-ad', 
-            'baiviet-lienquan', 'bv-lienquan', 'btn-link-ads', 'not-in-view', 'box-tin-lien-quan'
+            'baiviet-lienquan', 'bv-lienquan', 'btn-link-ads', 'not-in-view', 'box-tin-lien-quan',
+            'k-save-news', 'box-luu-tin' # Class chứa nút lưu tin
         ]
         for div in soup.find_all(class_=rac_classes): div.decompose()
 
-        # 2. META & DATE
+        # 2. LẤY ẢNH BÌA & NGÀY
         image_url = None
         meta_img = soup.find('meta', property='og:image')
         if meta_img: image_url = meta_img.get('content')
@@ -61,23 +64,33 @@ def get_article_content(article_url, headers):
                 published_date = dt.strftime('%Y-%m-%d %H:%M:%S')
             except: pass
         
-        # 3. XỬ LÝ NỘI DUNG (Tái cấu trúc HTML)
+        # 3. XỬ LÝ NỘI DUNG (CÓ LỌC TỪ KHÓA RÁC)
         sapo = soup.find('h2', class_='baiviet-sapo')
         body = soup.find('article', id='article_body') or soup.find('div', id='article_body')
         
         full_html = ""
-        if sapo: full_html += f'<p style="font-weight:bold; font-size:1.1em;">{sapo.get_text().strip()}</p>'
+        if sapo: full_html += f'<p class="fw-bold"><strong>{sapo.get_text().strip()}</strong></p>'
 
         if body:
-            # Duyệt qua từng thẻ con để xây dựng lại HTML sạch
-            # (Cách này tránh được việc lấy nhầm các div rác còn sót lại)
+            # Danh sách từ khóa rác cần loại bỏ
+            bad_phrases = [
+                "Nguồn:", "Theo:", "Lưu bài viết", "xem lại bài viết", 
+                "Tin bài đã lưu", "Mời độc giả xem thêm"
+            ]
+
             for el in body.descendants:
                 if el.name == 'p':
                     text = el.get_text().strip()
-                    # Bỏ dòng rác
-                    if "Nguồn:" in text or "Theo:" in text: continue
                     
-                    # Xử lý ảnh trong P
+                    # --- KIỂM TRA TỪ KHÓA RÁC ---
+                    is_garbage = False
+                    for phrase in bad_phrases:
+                        if phrase in text:
+                            is_garbage = True
+                            break
+                    if is_garbage: continue 
+                    # ----------------------------
+
                     img = el.find('img')
                     if img:
                         src = img.get('data-original') or img.get('src')
@@ -88,11 +101,9 @@ def get_article_content(article_url, headers):
                         full_html += f'<p>{text}</p>'
                 
                 elif el.name in ['h2', 'h3', 'h4']:
-                    # Giữ lại tiêu đề phụ
                     full_html += f'<{el.name} class="fw-bold mt-3 mb-2">{el.get_text().strip()}</{el.name}>'
                 
                 elif el.name == 'table':
-                    # Giữ lại bảng (giá vàng, tỷ số)
                     full_html += str(el)
 
         return full_html, published_date, image_url

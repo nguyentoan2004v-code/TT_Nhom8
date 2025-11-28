@@ -14,122 +14,105 @@
     
     <style>
         :root { --primary: #ff6b00; --secondary: #2c3e50; --bg-gray: #f7f7f7; }
-        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-gray); color: #333; padding-top: 130px; }
+        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-gray); color: #333; padding-top: 80px; }
 
-        /* --- HEADER 2 TẦNG --- */
-        .fixed-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1030; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-        /* Tầng 1: Logo & Tìm kiếm */
-        .top-header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid #f0f0f0; }
-        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.8rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; }
+        /* Navbar */
+        .navbar { background: #fff; border-bottom: 3px solid var(--primary); height: 70px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; width: 100%; padding: 0 20px; }
         
-        .search-wrapper { position: relative; width: 250px; }
-        .search-input { border: 1px solid #ddd; border-radius: 20px; padding: 6px 15px 6px 35px; font-size: 0.9rem; width: 100%; background: #f9f9f9; }
+        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.6rem; color: var(--primary); text-decoration: none; margin-right: 30px; white-space: nowrap; display: flex; align-items: center; }
+        
+        .nav-menu { flex-grow: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; height: 70px; margin-right: 20px; display: flex; align-items: center; }
+        .nav-menu::-webkit-scrollbar { display: none; }
+        .nav-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 0.9rem; padding: 0 15px; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
+        .nav-menu a:hover, .nav-menu a.active { color: var(--primary); border-bottom-color: var(--primary); background-color: #fffaf5; }
+
+        .search-form { flex-shrink: 0; position: relative; width: 220px; }
+        .search-input { border: 1px solid #ddd; border-radius: 20px; padding: 6px 15px 6px 35px; font-size: 0.85rem; width: 100%; background: #f9f9f9; transition: 0.3s; }
         .search-icon-btn { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; border: none; background: none; pointer-events: none; }
 
-        /* Tầng 2: Menu Danh mục */
-        .bottom-header { height: 50px; display: flex; align-items: center; border-bottom: 2px solid var(--primary); background: #fff; }
-        .cat-menu { display: flex; align-items: center; overflow-x: auto; white-space: nowrap; scrollbar-width: none; height: 100%; width: 100%; padding: 0 20px; }
-        .cat-menu::-webkit-scrollbar { display: none; }
-        
-        .cat-menu a { 
-            text-decoration: none; color: #444; font-weight: 600; font-size: 0.9rem; 
-            padding: 0 15px; height: 100%; display: flex; align-items: center; 
-            border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; 
-        }
-        .cat-menu a:hover, .cat-menu a.active { color: var(--primary); border-bottom-color: var(--primary); background-color: #fffaf5; }
-
-        /* --- GRID TIN TỨC --- */
-        .section-title { font-weight: 800; color: #222; border-left: 5px solid var(--primary); padding-left: 15px; margin: 20px 0 25px; text-transform: uppercase; font-size: 1.1rem; }
-        
-        .news-card { background: #fff; border: none; border-radius: 10px; overflow: hidden; transition: 0.3s; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        /* Grid Tin Tức */
+        .section-title { font-weight: 800; color: #222; border-left: 5px solid var(--primary); padding-left: 15px; margin: 10px 0 25px; text-transform: uppercase; font-size: 1.1rem; }
+        .news-card { background: #fff; border: none; border-radius: 10px; overflow: hidden; transition: transform 0.3s; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
+
         .card-img-wrap { position: relative; padding-top: 60%; overflow: hidden; background: #eee; }
         .card-img-top { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
         .news-card:hover .card-img-top { transform: scale(1.1); }
 
-        /* Ảnh thay thế (Fallback) */
-        .fallback-img {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.9); background: linear-gradient(135deg, #bdc3c7, #2c3e50);
-            text-align: center; z-index: 1;
-        }
+        /* Fallback Image Style */
+        .fallback-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.9); background: linear-gradient(135deg, #bdc3c7, #2c3e50); text-align: center; z-index: 1; }
         .fallback-img i { font-size: 3rem; margin-bottom: 8px; display: block; }
         .fallback-img span { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 15px; }
-
-        /* Màu nền danh mục */
-        .bg-the-thao { background: linear-gradient(135deg, #11998e, #38ef7d); }
-        .bg-phap-luat { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
-        .bg-giai-tri { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
-        .bg-cong-nghe { background: linear-gradient(135deg, #302b63, #24243e); }
-        .bg-suc-khoe { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .bg-the-thao { background: linear-gradient(135deg, #11998e, #38ef7d); } /* ... colors... */
 
         .source-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; z-index: 5; }
-        
+        .cat-tag { position: absolute; bottom: 10px; left: 10px; background: var(--primary); color: #fff; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; z-index: 5; }
+
         .card-body { padding: 15px; display: flex; flex-direction: column; }
         .news-title { font-size: 1rem; font-weight: 700; line-height: 1.4; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .news-title a { text-decoration: none; color: #333; transition: 0.2s; }
         .news-title a:hover { color: var(--primary); }
         .news-meta { margin-top: auto; font-size: 0.8rem; color: #888; border-top: 1px dashed #eee; padding-top: 10px; display: flex; justify-content: space-between; }
 
-        /* --- SIDEBAR (NGUỒN BÁO) --- */
+        /* Sidebar */
         .sidebar-box { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .sidebar-head { font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 15px; color: #222; }
-        
-        .list-vertical li { list-style: none; padding: 10px 0; border-bottom: 1px dashed #eee; }
         .list-vertical li a { text-decoration: none; color: #555; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .list-vertical li a:hover { color: var(--primary); padding-left: 5px; }
-        .count-badge { background: #eee; color: #555; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; }
-        .list-vertical li a:hover .count-badge { background: var(--primary); color: #fff; }
     </style>
 </head>
 <body>
 
     @php
         $icons = [
-            'Chính trị - Xã hội' => 'fa-landmark',
-            'Kinh doanh' => 'fa-chart-line', 'Giáo dục' => 'fa-graduation-cap',
+            'Chính trị - Xã hội' => 'fa-landmark', 'Kinh doanh' => 'fa-chart-line', 'Giáo dục' => 'fa-graduation-cap',
             'Thể thao' => 'fa-futbol', 'Pháp luật' => 'fa-gavel',
             'Giải trí' => 'fa-music', 'Công nghệ' => 'fa-microchip',
             'Sức khỏe' => 'fa-heartbeat', 'Đời sống' => 'fa-coffee',
         ];
+        // KHAI BÁO BIẾN PROXY URL TẠI ĐÂY
+        $proxyUrl = 'https://images.weserv.nl/?url=';
+        // Màu nền Fallback (Đã giữ)
+        $fallbackColors = [
+            'Thể thao' => 'bg-the-thao', 'Pháp luật' => 'bg-phap-luat', 'Kinh doanh' => 'bg-cong-nghe'
+        ];
     @endphp
 
-    <div class="fixed-header">
-        <div class="container">
-            <div class="top-header">
-                <a href="{{ url('/') }}" class="brand-logo"><i class="fas fa-paw brand-icon me-2"></i>BÁO ĐỐM</a>
-                <form action="{{ route('news.index') }}" method="GET" class="search-wrapper">
-                    <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
-                    <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
-                </form>
-            </div>
+    <nav class="navbar fixed-top">
+        <div class="header-container">
+            
+            <a href="{{ url('/') }}" class="brand-logo"><i class="fas fa-paw brand-icon me-2"></i>BÁO ĐỐM</a>
 
-            <div class="bottom-header">
-                <div class="cat-menu">
-                    <a href="{{ url('/') }}" class="{{ !isset($currentCategory) && !isset($currentSource) ? 'active' : '' }}">
-                        <i class="fas fa-home me-1"></i> Tất cả
-                    </a>
+            <div class="nav-menu">
+                <a href="{{ url('/') }}" class="{{ !isset($currentCategory) && !isset($currentSource) ? 'active' : '' }}">
+                    <i class="fas fa-home me-1"></i> Tất cả
+                </a>
+                @if(isset($categories))
                     @foreach($categories as $cat)
-                        <a href="{{ route('news.category', $cat->id) }}" class="{{ (isset($currentCategory) && $currentCategory->id == $cat->id) ? 'active' : '' }}">
+                        <a href="{{ route('news.category', $cat->id) }}" 
+                           class="{{ (isset($currentCategory) && $currentCategory->id == $cat->id) ? 'active' : '' }}">
                            <i class="fas {{ $icons[$cat->name] ?? 'fa-folder' }} me-2 opacity-75"></i>
                            {{ $cat->name }}
                         </a>
                     @endforeach
-                </div>
+                @endif
             </div>
+
+            <form action="{{ route('news.index') }}" method="GET" class="search-form">
+                <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
+                <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
+            </form>
+
         </div>
-    </div>
+    </nav>
 
     <div class="container mt-4">
         <div class="row">
             
             <div class="col-lg-9">
                 <div class="section-title">
-                    @if(isset($currentSource)) <i class="fas fa-newspaper me-2"></i>Nguồn: <span class="text-danger">{{ $currentSource->name }}</span>
-                    @elseif(isset($currentCategory)) <i class="fas fa-folder-open me-2"></i>Mục: {{ $currentCategory->name }}
+                    @if(isset($currentSource)) <i class="fas fa-newspaper me-2"></i>Tin từ: <span class="text-danger">{{ $currentSource->name }}</span>
+                    @elseif(isset($currentCategory)) <i class="fas {{ $icons[$currentCategory->name] ?? 'fa-folder-open' }} me-2"></i>{{ $currentCategory->name }}
                     @elseif(request('search')) <i class="fas fa-search me-2"></i>Kết quả: "{{ request('search') }}"
                     @else <i class="fas fa-bolt me-2"></i>Tin Mới Cập Nhật @endif
                 </div>
@@ -143,27 +126,28 @@
                             $catName = $firstCat ? $firstCat->name : 'Tin tức';
                             $iconClass = $icons[$catName] ?? 'fa-newspaper';
                             
-                            $bgClass = '';
-                            if(in_array($catName, ['Thể thao', 'Sức khỏe'])) $bgClass = 'bg-the-thao';
-                            elseif(in_array($catName, ['Pháp luật', 'Chính trị - Xã hội'])) $bgClass = 'bg-phap-luat';
-                            elseif(in_array($catName, ['Giải trí', 'Đời sống'])) $bgClass = 'bg-giai-tri';
-                            elseif(in_array($catName, ['Công nghệ'])) $bgClass = 'bg-cong-nghe';
+                            $bgClass = $fallbackColors[$catName] ?? 'bg-default';
+                            
+                            // ÁP DỤNG PROXY URL CHO ẢNH
+                            $finalImageUrl = !empty($article->image_url) ? $proxyUrl . urlencode($article->image_url) : null;
                         @endphp
 
                         <div class="col">
                             <div class="news-card h-100">
                                 <div class="card-img-wrap">
-                                    <a href="{{ route('news.show', $article->id) }}" class="d-block h-100 w-100">
-                                        @if(!empty($article->image_url))
-                                            <img src="{{ $article->image_url }}" class="card-img-top" 
+                                    <a href="{{ route('news.show', $article->id) }}">
+                                        @if($finalImageUrl)
+                                            <img src="{{ $finalImageUrl }}" class="card-img-top" 
                                                  onerror="this.style.display='none'; document.getElementById('fallback-home-{{$article->id}}').style.display='flex'">
                                             
-                                            <div id="fallback-home-{{$article->id}}" class="fallback-img {{ $bgClass }}" style="display:none;">
-                                                <i class="fas {{ $iconClass }}"></i><span>{{ $catName }}</span>
+                                            <div id="fallback-home-{{$article->id}}" class="card-img-top fallback-img {{ $bgClass }}" style="display:none;">
+                                                <i class="fas {{ $iconClass }} fa-3x mb-2 opacity-50"></i>
+                                                <span class="small fw-bold text-uppercase opacity-75">{{ $catName }}</span>
                                             </div>
                                         @else
                                             <div class="fallback-img {{ $bgClass }}">
-                                                <i class="fas {{ $iconClass }}"></i><span>{{ $catName }}</span>
+                                                <i class="fas {{ $iconClass }} fa-3x mb-2 opacity-50"></i>
+                                                <span class="small fw-bold text-uppercase opacity-75">{{ $catName }}</span>
                                             </div>
                                         @endif
                                     </a>
@@ -193,8 +177,7 @@
             </div>
 
             <div class="col-lg-3 ps-lg-4">
-                <div class="sticky-top" style="top: 160px;">
-                    
+                <div class="sticky-top" style="top: 100px;">
                     <div class="sidebar-box">
                         <div class="sidebar-head">Nguồn Báo</div>
                         
