@@ -1,6 +1,15 @@
 import requests
 import datetime
 from bs4 import BeautifulSoup
+import re 
+
+def is_valid_image_url(url):
+    if not url: return False
+    url = url.lower()
+    # Chỉ lọc những từ khóa rác thực sự, nới lỏng điều kiện
+    garbage = ['icon', 'banner', 'ads', 'advert', 'sponsored']
+    if any(k in url for k in garbage): return False
+    return True
 
 def get_articles():
     url = "https://tuoitre.vn/"
@@ -22,6 +31,7 @@ def get_articles():
                 link = 'https://tuoitre.vn' + href if not href.startswith('http') else href
                 if 'video' not in link and 'podcast' not in link:
                     content, published_date, image_url = get_article_content(link, headers)
+                    # Chỉ lấy bài có nội dung
                     if content and len(content) > 100:
                         articles.append({
                             'title': title, 'link': link, 'content': content,
@@ -36,18 +46,20 @@ def get_article_content(article_url, headers):
         response = requests.get(article_url, headers=headers, timeout=10)
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # 1. DỌN RÁC TRIỆT ĐỂ
-        for tag in soup.find_all(['script', 'style', 'iframe', 'video', 'audio', 'object', 'ads', 'button', 'input']): tag.decompose()
-        rac_classes = ['VCCorpPlayer', 'relate-container', 'box-relate', 'ads', 'banner-ads', 'sponsor', 
-                       'detail-content-bottom', 'audioplayer', 'box-tin-tai-tro', 'news-relate-bot', 'tin-tuong-tu', 
-                       'VCSocialShare', 'right-tool-detail', 'VCPaywall', 'box-tin-can-biet']
+        # 1. DỌN RÁC (Chỉ xóa các thành phần kỹ thuật và quảng cáo)
+        for tag in soup.find_all(['script', 'style', 'iframe', 'video', 'audio', 'object', 'button', 'input']): tag.decompose()
+        
+        # Xóa các khối quảng cáo đặc thù
+        rac_classes = ['VCCorpPlayer', 'relate-container', 'box-relate', 'ads', 'banner-ads', 'sponsor', 'detail-content-bottom', 'audioplayer', 'box-tin-tai-tro', 'news-relate-bot', 'tin-tuong-tu', 'VCSocialShare', 'right-tool-detail', 'VCPaywall', 'box-tin-can-biet']
         for div in soup.find_all(class_=rac_classes): div.decompose()
 
-        # 2. LẤY ẢNH BÌA & NGÀY
+        # 2. LẤY ẢNH BÌA (TỪ META)
         image_url = None
         meta_img = soup.find('meta', property='og:image')
-        if meta_img: image_url = meta_img.get('content')
+        if meta_img and is_valid_image_url(meta_img.get('content')): 
+            image_url = meta_img.get('content')
 
+        # Lấy ngày
         published_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         date_tag = soup.find('div', attrs={'data-role': 'publishdate'})
         if date_tag:
@@ -56,7 +68,7 @@ def get_article_content(article_url, headers):
                published_date = dt.strftime('%Y-%m-%d %H:%M:%S')
             except: pass
         
-        # 3. XỬ LÝ NỘI DUNG FULL (Sapo + Body)
+        # 3. XỬ LÝ NỘI DUNG (GIỮ LẠI TOÀN BỘ ẢNH)
         sapo = soup.find('h2', class_='sapo')
         body = soup.find('div', id='main-detail-body') or soup.find('div', class_='detail-content')
         
@@ -64,48 +76,61 @@ def get_article_content(article_url, headers):
         if sapo: full_html += f'<p style="font-weight:bold; font-size:1.1em;">{sapo.get_text().strip()}</p>'
 
         if body:
-            # Lấy tất cả các phần tử con cấp 1 (p, div, figure...)
-            children = body.find_all(['p', 'div', 'figure'], recursive=False)
+            clean_soup = BeautifulSoup('', 'html.parser')
+
+            # Quét tất cả các thẻ con cấp 1
+            for el in body.find_all(['p', 'div', 'figure', 'h2', 'h3', 'ul', 'ol', 'table'], recursive=False):
+                
+                # A. Xử lý Ảnh Tuổi Trẻ (VCSortableInPreviewMode)
+                if el.name == 'div' and 'VCSortableInPreviewMode' in el.get('class', []):
+                    img = el.find('img')
+                    if img:
+                        src = img.get('data-original') or img.get('src')
+                        
+                        # Lấy Caption (Chú thích) - Tuổi Trẻ thường để trong div PhotoCMS_Caption
+                        caption = ""
+                        caption_div = el.find('div', class_='PhotoCMS_Caption')
+                        if caption_div:
+                            caption = caption_div.get_text().strip()
+                        else:
+                            # Thử tìm trong các thẻ p con nếu không có class chuẩn
+                            p_cap = el.find('p')
+                            if p_cap: caption = p_cap.get_text().strip()
+
+                        if is_valid_image_url(src):
+                            # Tạo thẻ Figure chuẩn HTML5
+                            new_figure = clean_soup.new_tag("figure")
+                            new_img = clean_soup.new_tag("img", src=src, **{'class': 'img-fluid rounded'})
+                            new_figure.append(new_img)
+                            
+                            # Nếu có caption thì thêm vào
+                            if caption:
+                                new_cap = clean_soup.new_tag("figcaption")
+                                new_cap.string = caption
+                                new_figure.append(new_cap)
+                            
+                            clean_soup.append(new_figure)
+                            
+                            # Nếu chưa có ảnh bìa thì lấy ảnh đầu tiên này làm ảnh bìa
+                            if not image_url: image_url = src
+
+                # B. Xử lý Văn bản
+                elif el.name in ['p', 'h2', 'h3']:
+                    text = el.get_text().strip()
+                    # Lọc từ khóa quảng cáo
+                    if text and not any(k in text.lower() for k in ['quảng cáo', 'tin tài trợ', 'bấm để xem', 'đăng ký']):
+                         if len(text) > 2: # Bỏ dòng quá ngắn
+                            for a in el.find_all('a'): a.unwrap() # Xóa link
+                            clean_soup.append(el)
+                         
+                # C. Xử lý Danh sách & Bảng
+                elif el.name in ['ul', 'ol', 'table']:
+                     clean_soup.append(el)
+
+            full_html += clean_soup.decode_contents()
             
-            # --- THÊM LOGIC: CẮT BỎ CÁC PHẦN TỬ CUỐI CÙNG (GÂY LỖI) ---
-            # Xóa 3 phần tử cuối cùng nếu chúng là ảnh/figure/div ngắn ngủi (khu vực nhúng quảng cáo)
-            for i in range(1, 4): 
-                if len(children) >= i:
-                    el = children[-i] # Lấy phần tử từ cuối lên
-                    is_image_block = el.name in ['figure'] or el.find('img')
-                    is_too_short = el.name == 'p' and len(el.get_text().strip()) < 50
-                    
-                    if is_image_block or is_too_short:
-                        el.decompose()
-            # -----------------------------------------------------------
-
-            # Fix ảnh trong bài
-            for div_img in body.find_all('div', class_='VCSortableInPreviewMode'):
-                img = div_img.find('img')
-                if img:
-                    src = img.get('data-original') or img.get('src')
-                    caption_tag = div_img.find('div', class_='PhotoCMS_Caption')
-                    caption = caption_tag.get_text().strip() if caption_tag else ""
-                    
-                    new_figure = soup.new_tag("figure")
-                    new_img = soup.new_tag("img", src=src, **{'class': 'img-fluid rounded'})
-                    new_figure.append(new_img)
-                    if caption:
-                        new_cap = soup.new_tag("figcaption")
-                        new_cap.string = caption
-                        new_figure.append(new_cap)
-                    
-                    div_img.replace_with(new_figure) 
-                else:
-                    div_img.decompose() 
-
-            # Xóa link và thẻ P rỗng
-            for a in body.find_all('a'): a.unwrap()
-            for p in body.find_all('p'):
-                if not p.get_text().strip() and not p.find():
-                    p.decompose()
-
-            full_html += body.decode_contents()
+            # Xóa khoảng trống thừa
+            full_html = re.sub(r'<(p|div|figure|h[1-6]|ul|ol|table)\s*[^>]*>\s*<\/\1>', '', full_html, flags=re.IGNORECASE)
 
         return full_html, published_date, image_url
     except: return None, None, None

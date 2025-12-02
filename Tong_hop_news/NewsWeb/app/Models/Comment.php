@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
+    
+    protected $fillable = ['article_id', 'name', 'content', 'parent_id', 'likes'];
 
-    protected $table = 'comments';
-    protected $fillable = ['article_id', 'name', 'content', 'likes', 'parent_id']; // Thêm parent_id
-
-    // Quan hệ: Một comment có thể có nhiều câu trả lời (children)
+    // Quan hệ để lấy các câu trả lời con
     public function replies()
     {
         return $this->hasMany(Comment::class, 'parent_id');

@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta name="referrer" content="no-referrer">
-    
     <title>Báo Đốm - Tin tức nhanh & chính xác</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
@@ -14,7 +12,17 @@
     
     <style>
         :root { --primary: #ff6b00; --secondary: #2c3e50; --bg-gray: #f7f7f7; }
-        body { font-family: 'Roboto', sans-serif; background-color: var(--bg-gray); color: #333; padding-top: 80px; }
+        
+        /* Cấu trúc Flexbox để Footer luôn ở đáy */
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: var(--bg-gray); 
+            color: #333; 
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
         /* Navbar */
         .navbar { background: #fff; border-bottom: 3px solid var(--primary); height: 70px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
@@ -32,6 +40,7 @@
         .search-icon-btn { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; border: none; background: none; pointer-events: none; }
 
         /* Grid Tin Tức */
+        .main-content-wrap { flex: 1; } /* Đẩy footer xuống */
         .section-title { font-weight: 800; color: #222; border-left: 5px solid var(--primary); padding-left: 15px; margin: 10px 0 25px; text-transform: uppercase; font-size: 1.1rem; }
         .news-card { background: #fff; border: none; border-radius: 10px; overflow: hidden; transition: transform 0.3s; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
@@ -44,11 +53,10 @@
         .fallback-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.9); background: linear-gradient(135deg, #bdc3c7, #2c3e50); text-align: center; z-index: 1; }
         .fallback-img i { font-size: 3rem; margin-bottom: 8px; display: block; }
         .fallback-img span { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 15px; }
-        .bg-the-thao { background: linear-gradient(135deg, #11998e, #38ef7d); } /* ... colors... */
+        .bg-the-thao { background: linear-gradient(135deg, #11998e, #38ef7d); }
 
         .source-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; z-index: 5; }
-        .cat-tag { position: absolute; bottom: 10px; left: 10px; background: var(--primary); color: #fff; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-weight: bold; z-index: 5; }
-
+        
         .card-body { padding: 15px; display: flex; flex-direction: column; }
         .news-title { font-size: 1rem; font-weight: 700; line-height: 1.4; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .news-title a { text-decoration: none; color: #333; transition: 0.2s; }
@@ -59,6 +67,63 @@
         .sidebar-box { background: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .sidebar-head { font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 15px; color: #222; }
         .list-vertical li a { text-decoration: none; color: #555; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        
+        /* --- CSS FOOTER MỚI (Đã đồng bộ) --- */
+        .main-footer {
+            background-color: #1a1a1a;
+            color: #b0b0b0;
+            padding-top: 60px;
+            margin-top: 80px;
+            font-size: 0.95rem;
+        }
+        .footer-brand {
+            color: var(--primary);
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .footer-desc { line-height: 1.6; margin-bottom: 20px; }
+        .footer-title {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+        .footer-title::after {
+            content: ''; position: absolute; left: 0; bottom: -8px;
+            width: 40px; height: 3px; background: var(--primary);
+        }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: #b0b0b0; text-decoration: none; transition: 0.2s; }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        
+        .social-links a {
+            width: 38px; height: 38px;
+            background: rgba(255,255,255,0.1);
+            display: inline-flex; justify-content: center; align-items: center;
+            border-radius: 50%;
+            color: #fff;
+            margin-right: 10px;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .social-links a:hover { background: var(--primary); transform: translateY(-3px); }
+        
+        .copyright {
+            background: #111;
+            padding: 20px 0;
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
     </style>
 </head>
 <body>
@@ -70,9 +135,7 @@
             'Giải trí' => 'fa-music', 'Công nghệ' => 'fa-microchip',
             'Sức khỏe' => 'fa-heartbeat', 'Đời sống' => 'fa-coffee',
         ];
-        // KHAI BÁO BIẾN PROXY URL TẠI ĐÂY
         $proxyUrl = 'https://images.weserv.nl/?url=';
-        // Màu nền Fallback (Đã giữ)
         $fallbackColors = [
             'Thể thao' => 'bg-the-thao', 'Pháp luật' => 'bg-phap-luat', 'Kinh doanh' => 'bg-cong-nghe'
         ];
@@ -80,7 +143,6 @@
 
     <nav class="navbar fixed-top">
         <div class="header-container">
-            
             <a href="{{ url('/') }}" class="brand-logo"><i class="fas fa-paw brand-icon me-2"></i>BÁO ĐỐM</a>
 
             <div class="nav-menu">
@@ -102,11 +164,10 @@
                 <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
                 <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
             </form>
-
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-4 main-content-wrap">
         <div class="row">
             
             <div class="col-lg-9">
@@ -125,10 +186,7 @@
                             $firstCat = $article->categories->first();
                             $catName = $firstCat ? $firstCat->name : 'Tin tức';
                             $iconClass = $icons[$catName] ?? 'fa-newspaper';
-                            
                             $bgClass = $fallbackColors[$catName] ?? 'bg-default';
-                            
-                            // ÁP DỤNG PROXY URL CHO ẢNH
                             $finalImageUrl = !empty($article->image_url) ? $proxyUrl . urlencode($article->image_url) : null;
                         @endphp
 
@@ -214,10 +272,47 @@
         </div>
     </div>
 
-    <footer class="bg-white border-top py-4 mt-5 text-center">
+    <footer class="main-footer">
         <div class="container">
-            <div class="brand-logo justify-content-center mb-2" style="font-size: 1.4rem;"><i class="fas fa-paw brand-icon"></i> BÁO ĐỐM</div>
-            <p class="text-muted small mb-0">© 2025 Tổng hợp tin tức tự động.</p>
+            <div class="row">
+                <div class="col-md-5 mb-4">
+                    <a href="{{ url('/') }}" class="footer-brand"><i class="fas fa-paw"></i> BÁO ĐỐM</a>
+                    <p class="footer-desc">
+                        Hệ thống tổng hợp tin tức tự động thông minh, mang đến cho bạn những thông tin nóng hổi, chính xác và đa chiều nhất từ các nguồn báo chí uy tín hàng đầu Việt Nam.
+                    </p>
+                    <div class="social-links mt-3">
+                        <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.facebook.com/"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">Liên Hệ Nhóm 8</h5>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt me-2 text-warning"></i> Đại học Công Nghệ TP.HCM</li>
+                        <li><i class="fas fa-envelope me-2 text-warning"></i> contact@baodom.com</li>
+                        <li><i class="fas fa-phone-alt me-2 text-warning"></i> (039) 6046 671</li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-md-start">
+                        © 2025 <strong>Báo Đốm</strong>. All Rights Reserved.
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="#" class="text-white text-decoration-none mx-2 small">Điều khoản</a>
+                        <a href="#" class="text-white text-decoration-none mx-2 small">Bảo mật</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 
