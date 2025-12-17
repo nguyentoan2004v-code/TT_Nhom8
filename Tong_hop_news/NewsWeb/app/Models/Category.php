@@ -11,7 +11,6 @@ class Category extends Model
     
     protected $table = 'categories';
     
-    // Hàm này BẮT BUỘC phải có 'return'
     public function articles()
     {
         return $this->belongsToMany(Article::class, 'article_category', 'category_id', 'article_id');

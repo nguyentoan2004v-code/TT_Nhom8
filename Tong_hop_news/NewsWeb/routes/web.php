@@ -3,29 +3,33 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
-// 1. Trang chủ & Tìm kiếm
+
 Route::get('/', [NewsController::class, 'index'])->name('news.index');
 
-// 2. Lọc tin theo Danh mục (Thể thao, Giáo dục...)
 Route::get('/danh-muc/{id}', [NewsController::class, 'category'])->name('news.category');
 
-// 3. Lọc tin theo Nguồn báo (VnExpress, Tuổi Trẻ...) <--- DÒNG BẠN ĐANG THIẾU
 Route::get('/nguon/{id}', [NewsController::class, 'source'])->name('news.source');
 
-// 4. Xem chi tiết bài viết
 Route::get('/bai-viet/{id}', [NewsController::class, 'show'])->name('news.show');
 
-// 5. Gửi bình luận
 Route::post('/bai-viet/{id}/comment', [NewsController::class, 'comment'])->name('news.comment');
 
-// 6. Thả tim Bài Viết
 Route::get('/article/{id}/love', [NewsController::class, 'loveArticle'])->name('article.love');
 
-// 7. Thích Bình Luận
 Route::get('/comment/{id}/like', [NewsController::class, 'likeComment'])->name('comment.like');
+
+// --- Admin simple auth (UI button + dashboard) ---
+use App\Http\Controllers\AdminController;
+
+Route::get('/admin/login', [AdminController::class, 'showLogin'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.post');
+Route::get('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+// Admin article management
+Route::delete('/admin/article/{id}/delete', [AdminController::class, 'deleteArticle'])->name('admin.article.delete');
+Route::post('/admin/article/{id}/toggle', [AdminController::class, 'toggleArticle'])->name('admin.article.toggle');
+Route::post('/admin/fetch-news', [AdminController::class, 'fetchNews'])->name('admin.fetch-news');
+Route::post('/admin/fetch-news-details', [AdminController::class, 'fetchNewsDetails'])->name('admin.fetch-news-details');
+Route::get('/admin/scrape-status', [AdminController::class, 'getScrapeStatus'])->name('admin.scrape-status');

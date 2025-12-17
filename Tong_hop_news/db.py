@@ -36,6 +36,45 @@ def add_article_category(conn, article_id, category_id):
         pass
     cur.close()
 
+def check_user_login(email, password):
+    """Kiểm tra user đăng nhập từ database - trả về True/False"""
+    conn = get_conn()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("SELECT password FROM users WHERE email = %s", (email,))
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        if result:
+            # So sánh mật khẩu plaintext (hoặc dùng bcrypt nếu muốn bảo mật)
+            stored_password = result[0]
+            return stored_password == password
+        return False
+    except Exception as e:
+        print(f"Lỗi kiểm tra user: {e}")
+        cur.close()
+        conn.close()
+        return False
+
+def get_user_by_email(email):
+    """Lấy thông tin user từ email"""
+    conn = get_conn()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("SELECT id, name, email FROM users WHERE email = %s", (email,))
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        return result
+    except Exception as e:
+        print(f"Lỗi lấy user: {e}")
+        cur.close()
+        conn.close()
+        return None
+
 def save_article(title, link, content, source_name, published_date, image_url):
     """Lưu bài báo và trả về ID"""
     conn = get_conn()

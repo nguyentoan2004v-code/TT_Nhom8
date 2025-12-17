@@ -45,10 +45,10 @@
         .btn-like { color: #666; font-size: 0.85rem; font-weight: 600; margin-right: 15px; text-decoration: none; }
         .btn-back { color: #666; font-weight: 600; text-decoration: none; margin-bottom: 20px; display: inline-block; }
 
-        /* --- CSS FOOTER MỚI --- */
+        /* --- CSS FOOTER  --- */
         .main-footer {
-            background-color: #1a1a1a;
-            color: #b0b0b0;
+            background-color: #080808ff;
+            color: #f4efefff;
             padding-top: 60px;
             margin-top: 80px;
             font-size: 0.95rem;

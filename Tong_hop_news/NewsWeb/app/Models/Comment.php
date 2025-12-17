@@ -11,7 +11,6 @@ class Comment extends Model
     
     protected $fillable = ['article_id', 'name', 'content', 'parent_id', 'likes'];
 
-    // Quan hệ để lấy các câu trả lời con
     public function replies()
     {
         return $this->hasMany(Comment::class, 'parent_id');

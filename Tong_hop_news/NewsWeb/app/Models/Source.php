@@ -11,8 +11,6 @@ class Source extends Model
 
     protected $table = 'sources';
 
-    // --- ĐÂY LÀ HÀM BẠN ĐANG THIẾU ---
-    // Khai báo: Một Nguồn báo (Source) có nhiều Bài viết (Articles)
     public function articles()
     {
         return $this->hasMany(Article::class, 'source_id', 'id');

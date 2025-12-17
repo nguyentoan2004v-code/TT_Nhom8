@@ -6,7 +6,6 @@ import re
 def is_valid_image_url(url):
     if not url: return False
     url = url.lower()
-    # Chỉ lọc những từ khóa rác thực sự, nới lỏng điều kiện
     garbage = ['icon', 'banner', 'ads', 'advert', 'sponsored']
     if any(k in url for k in garbage): return False
     return True
@@ -31,7 +30,7 @@ def get_articles():
                 link = 'https://tuoitre.vn' + href if not href.startswith('http') else href
                 if 'video' not in link and 'podcast' not in link:
                     content, published_date, image_url = get_article_content(link, headers)
-                    # Chỉ lấy bài có nội dung
+                    
                     if content and len(content) > 100:
                         articles.append({
                             'title': title, 'link': link, 'content': content,
@@ -53,7 +52,7 @@ def get_article_content(article_url, headers):
         rac_classes = ['VCCorpPlayer', 'relate-container', 'box-relate', 'ads', 'banner-ads', 'sponsor', 'detail-content-bottom', 'audioplayer', 'box-tin-tai-tro', 'news-relate-bot', 'tin-tuong-tu', 'VCSocialShare', 'right-tool-detail', 'VCPaywall', 'box-tin-can-biet']
         for div in soup.find_all(class_=rac_classes): div.decompose()
 
-        # 2. LẤY ẢNH BÌA (TỪ META)
+        # 2. LẤY ẢNH BÌA 
         image_url = None
         meta_img = soup.find('meta', property='og:image')
         if meta_img and is_valid_image_url(meta_img.get('content')): 
@@ -68,7 +67,7 @@ def get_article_content(article_url, headers):
                published_date = dt.strftime('%Y-%m-%d %H:%M:%S')
             except: pass
         
-        # 3. XỬ LÝ NỘI DUNG (GIỮ LẠI TOÀN BỘ ẢNH)
+        # 3. XỬ LÝ NỘI DUNG 
         sapo = soup.find('h2', class_='sapo')
         body = soup.find('div', id='main-detail-body') or soup.find('div', class_='detail-content')
         
@@ -81,13 +80,13 @@ def get_article_content(article_url, headers):
             # Quét tất cả các thẻ con cấp 1
             for el in body.find_all(['p', 'div', 'figure', 'h2', 'h3', 'ul', 'ol', 'table'], recursive=False):
                 
-                # A. Xử lý Ảnh Tuổi Trẻ (VCSortableInPreviewMode)
+                # A. Xử lý Ảnh Tuổi Trẻ 
                 if el.name == 'div' and 'VCSortableInPreviewMode' in el.get('class', []):
                     img = el.find('img')
                     if img:
                         src = img.get('data-original') or img.get('src')
                         
-                        # Lấy Caption (Chú thích) - Tuổi Trẻ thường để trong div PhotoCMS_Caption
+                        # Lấy Caption 
                         caption = ""
                         caption_div = el.find('div', class_='PhotoCMS_Caption')
                         if caption_div:

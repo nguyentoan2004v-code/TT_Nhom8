@@ -5,17 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Comment;
-use App\Models\Source; // <--- ĐÂY LÀ DÒNG BẠN ĐANG THIẾU
+use App\Models\Source; 
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    // 1. TRANG CHỦ & TÌM KIẾM
+    // 1. TRANG CHỦ 
     public function index(Request $request)
     {
-        $query = Article::with(['source', 'categories']);
+        $query = Article::with(['source', 'categories'])
+                        ->where('is_visible', true);
 
-        // Tìm kiếm thông minh
+        // Tìm kiếm 
         if ($request->has('search') && $request->search != '') {
             $keyword = $request->search;
             $query->where(function($q) use ($keyword) {
@@ -25,11 +26,12 @@ class NewsController extends Controller
             $query->orderByRaw("CASE WHEN title LIKE ? THEN 1 ELSE 2 END", ["%{$keyword}%"]);
         }
         
-        $query->orderBy('id', 'desc');
+        // Order by published_date if present, otherwise created_at — newest first
+        $query->orderByRaw("COALESCE(published_date, created_at) DESC");
         $articles = $query->paginate(15)->appends($request->query());
         // Lấy dữ liệu cho Menu và Sidebar
         $categories = Category::all(); 
-        $sources = Source::all(); // <--- Dòng này gây lỗi nếu thiếu import ở trên
+        $sources = Source::all(); 
 
         return view('news.index', compact('articles', 'categories', 'sources'));
     }
@@ -39,12 +41,13 @@ class NewsController extends Controller
     {
         $currentCategory = Category::findOrFail($id);
         $articles = $currentCategory->articles()
-                                    ->with(['source', 'categories'])
-                                    ->orderBy('id', 'desc')
-                                    ->paginate(15);
+                        ->with(['source', 'categories'])
+                                    ->where('is_visible', true)
+                                    ->orderByRaw("COALESCE(published_date, created_at) DESC")
+                        ->paginate(15);
                                     
         $categories = Category::all();
-        $sources = Source::all(); // Cần biến này để hiển thị sidebar
+        $sources = Source::all(); 
         
         return view('news.index', compact('articles', 'categories', 'sources', 'currentCategory'));
     }
@@ -54,9 +57,10 @@ class NewsController extends Controller
     {
         $currentSource = Source::findOrFail($id);
         $articles = $currentSource->articles()
-                                  ->with(['source', 'categories'])
-                                  ->orderBy('id', 'desc')
-                                  ->paginate(15);
+                      ->with(['source', 'categories'])
+                                  ->where('is_visible', true)
+                                  ->orderByRaw("COALESCE(published_date, created_at) DESC")
+                      ->paginate(15);
                                   
         $categories = Category::all();
         $sources = Source::all();
@@ -69,12 +73,12 @@ class NewsController extends Controller
     {
         $article = Article::with(['source', 'categories', 'comments' => function($q) {
             $q->whereNull('parent_id')->orderBy('id', 'desc');
-        }])->findOrFail($id);
+        }])->where('id', $id)->where('is_visible', true)->firstOrFail();
         
         return view('news.show', compact('article'));
     }
 
-    // 5. CÁC HÀM XỬ LÝ KHÁC (Comment, Like, Tim)
+    // 5. Comment, Like, Tim
     public function comment(Request $request, $id)
     {
         $request->validate(['name'=>'required', 'content'=>'required']);

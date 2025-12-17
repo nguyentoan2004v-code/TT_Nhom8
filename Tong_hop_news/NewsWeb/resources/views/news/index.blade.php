@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
+
         :root { --primary: #ff6b00; --secondary: #2c3e50; --bg-gray: #f7f7f7; }
         
-        /* Cấu trúc Flexbox để Footer luôn ở đáy */
         body { 
             font-family: 'Roboto', sans-serif; 
             background-color: var(--bg-gray); 
@@ -28,19 +28,20 @@
         .navbar { background: #fff; border-bottom: 3px solid var(--primary); height: 70px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .header-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; width: 100%; padding: 0 20px; }
         
-        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.6rem; color: var(--primary); text-decoration: none; margin-right: 30px; white-space: nowrap; display: flex; align-items: center; }
+        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.6rem; color: var(--primary); text-decoration: none; margin-right: 30px; white-space: nowrap; display: flex; align-items: center; flex: 0 0 auto; }
         
-        .nav-menu { flex-grow: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; height: 70px; margin-right: 20px; display: flex; align-items: center; }
+        /* Nav menu: allow horizontal scrolling when items overflow */
+        .nav-menu { flex: 1 1 auto; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; scrollbar-width: none; height: 70px; margin-right: 20px; display: flex; align-items: center; }
         .nav-menu::-webkit-scrollbar { display: none; }
         .nav-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 0.9rem; padding: 0 15px; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
         .nav-menu a:hover, .nav-menu a.active { color: var(--primary); border-bottom-color: var(--primary); background-color: #fffaf5; }
 
-        .search-form { flex-shrink: 0; position: relative; width: 220px; }
+        .search-form { flex: 0 0 auto; position: relative; width: 220px; }
         .search-input { border: 1px solid #ddd; border-radius: 20px; padding: 6px 15px 6px 35px; font-size: 0.85rem; width: 100%; background: #f9f9f9; transition: 0.3s; }
         .search-icon-btn { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; border: none; background: none; pointer-events: none; }
 
         /* Grid Tin Tức */
-        .main-content-wrap { flex: 1; } /* Đẩy footer xuống */
+        .main-content-wrap { flex: 1; } 
         .section-title { font-weight: 800; color: #222; border-left: 5px solid var(--primary); padding-left: 15px; margin: 10px 0 25px; text-transform: uppercase; font-size: 1.1rem; }
         .news-card { background: #fff; border: none; border-radius: 10px; overflow: hidden; transition: transform 0.3s; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
@@ -68,7 +69,28 @@
         .sidebar-head { font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 15px; color: #222; }
         .list-vertical li a { text-decoration: none; color: #555; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
         
-        /* --- CSS FOOTER MỚI (Đã đồng bộ) --- */
+        /* Admin greeting */
+        .admin-greeting {
+            color: var(--secondary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-greeting i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .admin-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* --- CSS FOOTER MỚI --- */
         .main-footer {
             background-color: #1a1a1a;
             color: #b0b0b0;
@@ -164,8 +186,47 @@
                 <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
                 <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
             </form>
+
+            {{-- Admin button: hiện nút Đăng nhập nếu chưa đăng nhập admin, hiện Admin/Đăng xuất nếu đã đăng nhập --}}
+            <div class="admin-controls">
+                @if(session('is_admin'))
+                    <div class="admin-greeting">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Xin chào, {{ session('user_name') }}</span>
+                    </div>
+                    <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-primary" title="Quản trị" aria-label="Quản trị">
+                        <i class="fas fa-cogs"></i> Quản lý
+                    </a>
+                    <a href="{{ route('admin.logout') }}" class="btn btn-sm btn-danger" title="Đăng xuất" aria-label="Đăng xuất">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                @else
+                    <a href="{{ route('admin.login') }}" class="btn btn-sm btn-primary" title="Quản trị" aria-label="Quản trị">
+                        <i class="fas fa-user-shield"></i>
+                    </a>
+                @endif
+            </div>
+
+            <style>
+                /* Admin controls (icon buttons) in header */
+                .admin-controls { flex: 0 0 auto; margin-left: 12px; display: flex; align-items: center; gap: 8px; }
+                .nav-menu::-webkit-scrollbar { height: 6px; }
+                .nav-menu::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 6px; }
+                /* Thanh trượt nằm dưới navbar để kéo ngang danh mục */
+                .nav-range-wrap { position: fixed; top: 70px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: auto; z-index: 60; padding: 4px 0; }
+                .nav-range { -webkit-appearance: none; appearance: none; width: 50%; height: 4px; border-radius: 4px; background: #dcdcdc; outline: none; }
+                .nav-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.12); border: 2px solid #888888; cursor: pointer; }
+                .nav-range::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.12); border: 2px solid #888888; cursor: pointer; }
+                @media (max-width: 768px) { .nav-range { width: 76%; } }
+                @media (max-width: 480px) { .nav-range-wrap { display: none; } }
+            </style>
         </div>
     </nav>
+
+    {{-- Range slider dưới navbar để kéo ngang danh mục (hiển thị khi overflow) --}}
+    <div class="nav-range-wrap">
+        <input class="nav-range" type="range" min="0" max="100" value="0" aria-label="Trượt danh mục">
+    </div>
 
     <div class="container mt-4 main-content-wrap">
         <div class="row">
@@ -250,7 +311,7 @@
                                 <li>
                                     <a href="{{ route('news.source', $src->id) }}" class="{{ (isset($currentSource) && $currentSource->id == $src->id) ? 'text-warning' : '' }}">
                                         <span>{{ $src->name }}</span>
-                                        <span class="count-badge">{{ $src->articles()->count() }}</span>
+                                        <span class="count-badge">{{ $src->articles()->where('is_visible', true)->count() }}</span>
                                     </a>
                                 </li>
                                 @endforeach
@@ -318,3 +379,49 @@
 
 </body>
 </html>
+
+    <script>
+        // Đồng bộ thanh trượt với .nav-menu
+        (function(){
+            const slider = document.querySelector('.nav-menu');
+            const range = document.querySelector('.nav-range');
+            if(!slider || !range) return;
+
+            const maxScroll = ()=> Math.max(0, slider.scrollWidth - slider.clientWidth);
+
+            const updateRangeFromScroll = ()=>{
+                const max = maxScroll();
+                if(max <= 0){ range.style.display = 'none'; return; }
+                range.style.display = 'block';
+                range.value = Math.round((slider.scrollLeft / max) * 100) || 0;
+            };
+
+            const updateScrollFromRange = ()=>{
+                const max = maxScroll();
+                const left = Math.round((Number(range.value || 0) / 100) * max);
+                slider.scrollLeft = left;
+            };
+
+            // range -> scroll
+            range.addEventListener('input', updateScrollFromRange);
+
+            // scroll -> range
+            slider.addEventListener('scroll', updateRangeFromScroll);
+
+            // touch/drag support preserved (user can still drag nav to scroll)
+            let isDown = false, startX = 0, scrollLeft = 0;
+            slider.addEventListener('mousedown', (e)=>{ isDown = true; slider.classList.add('active'); startX = e.pageX - slider.getBoundingClientRect().left; scrollLeft = slider.scrollLeft; });
+            window.addEventListener('mouseup', ()=>{ isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mousemove', (e)=>{ if(!isDown) return; e.preventDefault(); const x = e.pageX - slider.getBoundingClientRect().left; const walk = (x - startX) * 1.2; slider.scrollLeft = scrollLeft - walk; });
+            slider.addEventListener('mouseleave', ()=>{ isDown = false; slider.classList.remove('active'); });
+
+            // touch
+            slider.addEventListener('touchstart', (e)=>{ startX = e.touches[0].pageX - slider.getBoundingClientRect().left; scrollLeft = slider.scrollLeft; });
+            slider.addEventListener('touchmove', (e)=>{ const x = e.touches[0].pageX - slider.getBoundingClientRect().left; const walk = (x - startX) * 1.2; slider.scrollLeft = scrollLeft - walk; });
+
+            // update on load/resize
+            window.addEventListener('resize', updateRangeFromScroll);
+            document.addEventListener('DOMContentLoaded', updateRangeFromScroll);
+            setTimeout(updateRangeFromScroll, 200);
+        })();
+    </script>

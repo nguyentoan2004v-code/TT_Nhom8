@@ -45,7 +45,7 @@ def get_article_content(article_url, headers):
         rac_classes = [
             'viewVideoPlay', 'video-content', 'banner-ads', 'zone-ad', 
             'baiviet-lienquan', 'bv-lienquan', 'btn-link-ads', 'not-in-view', 'box-tin-lien-quan',
-            'k-save-news', 'box-luu-tin' # Class chứa nút lưu tin
+            'k-save-news', 'box-luu-tin' 
         ]
         for div in soup.find_all(class_=rac_classes): div.decompose()
 
@@ -64,7 +64,7 @@ def get_article_content(article_url, headers):
                 published_date = dt.strftime('%Y-%m-%d %H:%M:%S')
             except: pass
         
-        # 3. XỬ LÝ NỘI DUNG (CÓ LỌC TỪ KHÓA RÁC)
+        # 3. XỬ LÝ NỘI DUNG 
         sapo = soup.find('h2', class_='baiviet-sapo')
         body = soup.find('article', id='article_body') or soup.find('div', id='article_body')
         
@@ -72,7 +72,7 @@ def get_article_content(article_url, headers):
         if sapo: full_html += f'<p class="fw-bold"><strong>{sapo.get_text().strip()}</strong></p>'
 
         if body:
-            # Danh sách từ khóa rác cần loại bỏ
+            
             bad_phrases = [
                 "Nguồn:", "Theo:", "Lưu bài viết", "xem lại bài viết", 
                 "Tin bài đã lưu", "Mời độc giả xem thêm"
@@ -89,7 +89,7 @@ def get_article_content(article_url, headers):
                             is_garbage = True
                             break
                     if is_garbage: continue 
-                    # ----------------------------
+                   
 
                     img = el.find('img')
                     if img:

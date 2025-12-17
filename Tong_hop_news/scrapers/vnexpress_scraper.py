@@ -7,7 +7,7 @@ import re
 def is_valid_image_url(url):
     if not url: return False
     url = url.lower()
-    # Danh sách các từ khóa rác phổ biến
+   
     garbage_keywords = ['logo', 'icon', 'default', 'no_photo', '30x', '180x', 'thumb_w', 'q_50', 'banner', 'ads', 'square', 'small']
     if any(k in url for k in garbage_keywords):
         return False
@@ -106,7 +106,7 @@ def get_article_content(article_url, headers):
                         for a in el.find_all('a'): a.unwrap()
                         full_html += str(el)
 
-        # C. FALLBACK CUỐI CÙNG: Dùng OG:Image nếu ảnh nội dung không có và URL OG hợp lệ
+        #  Dùng OG:Image nếu ảnh nội dung không có và URL OG hợp lệ
         if not image_url:
             meta_og = soup.find('meta', property='og:image')
             if meta_og: 
@@ -119,7 +119,7 @@ def get_article_content(article_url, headers):
             for a in sapo.find_all('a'): a.unwrap()
             full_html = f'<p style="font-weight:bold; font-size:1.1em;">{sapo.get_text().strip()}</p>' + full_html
         
-        # Clean up khoảng trống thừa
+     
         full_html = re.sub(r'<(p|div|figure|h[1-6]|ul|ol|table)\s*[^>]*>\s*<\/\1>', '', full_html, flags=re.IGNORECASE)
 
         return full_html, published_date, image_url
