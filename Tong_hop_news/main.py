@@ -128,7 +128,7 @@ def collect():
                         sys.stdout.flush()
                         continue
                 
-                print(f"✓ Lấy được {src_article_count} bài từ {src_name}")
+                print(f"✓ Hoàn tất lấy tin từ {src_name}.")
                 sys.stdout.flush()
             except Exception as e:
                 print(f"✗ Lỗi tại {src_name}: {e}")
@@ -147,7 +147,7 @@ def collect():
             except:
                 pass
     
-    print(f"\n--- HOÀN TẤT (Tổng: {total_articles} bài mới) ---")
+    print(f"\n--- HOÀN TẤT  ---")
     sys.stdout.flush()
     update_status("finished", f"Completed. {total_articles} articles added.")
 
