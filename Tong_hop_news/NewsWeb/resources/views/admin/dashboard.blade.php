@@ -365,7 +365,7 @@
             <div class="admin-controls">
                 <div class="btn-group me-2" role="group" aria-label="Cập nhật">
                     <button class="btn-fetch btn btn-sm btn-primary" id="fetchBtn" onclick="fetchNews()">
-                        <i class="fas fa-sync-alt"></i> Cập nhật (ẩn)
+                        <i class="fas fa-sync-alt"></i> Cập nhật
                     </button>
                     <button class="btn-fetch-details btn btn-sm btn-outline-light" id="fetchDetailsBtn" onclick="fetchNewsDetails()">
                         <i class="fas fa-desktop"></i> Chi tiết
