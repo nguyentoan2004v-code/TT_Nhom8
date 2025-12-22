@@ -146,38 +146,42 @@ class AdminController extends Controller
         }
 
         try {
-            $batFile = 'd:\\DOANCN\\TT_Nhom8\\Tong_hop_news\\run_auto.bat';
-            // write a small trigger log so we can confirm the POST reached server
+            // Sử dụng base_path để lấy đường dẫn tương đối từ gốc project Laravel
+            // Giả sử project đặt tại: .../Tong_hop_news/NewsWeb
+            // Thư mục scraper là: .../Tong_hop_news (là thư mục cha của NewsWeb)
+            $scraperDir = realpath(base_path('..')); 
+            $batFile = $scraperDir . DIRECTORY_SEPARATOR . 'run_auto.bat';
+            $pyScript = $scraperDir . DIRECTORY_SEPARATOR . 'main.py';
+
+            // Ghi log trigger (sử dụng đường dẫn linh hoạt)
             try {
-                $triggerFile = base_path('Tong_hop_news/fetch_trigger.log');
+                $triggerFile = $scraperDir . DIRECTORY_SEPARATOR . 'fetch_trigger.log';
                 file_put_contents($triggerFile, "[" . date('Y-m-d H:i:s') . "] fetchNews called\n", FILE_APPEND | LOCK_EX);
-            } catch (\Throwable $e) {
-                // ignore logging errors
-            }
+            } catch (\Throwable $e) {}
 
             if (PHP_OS_FAMILY === 'Windows') {
-                // Use escapeshellarg for the batch path to avoid quoting issues
+                // Chạy file .bat ở chế độ ẩn (/b)
                 $batEsc = escapeshellarg($batFile);
-                // start in background (/b) without opening a visible window
                 $command = "start \"Scraper\" /b cmd /c $batEsc";
                 exec($command);
             } else {
-                // Linux/Mac
-                $pythonDir = 'd:\\DOANCN\\TT_Nhom8\\Tong_hop_news';
-                $command = "cd $pythonDir && python main.py &";
+                // Cho Linux/Mac
+                $pyEsc = escapeshellarg($pyScript);
+                $dirEsc = escapeshellarg($scraperDir);
+                $command = "cd $dirEsc && python3 main.py > /dev/null 2>&1 &";
                 exec($command);
             }
             
             return response()->json([
                 'success' => true, 
-                'message' => 'Đang chạy scraper (ẩn). Dùng "Chi tiết" để mở cửa sổ xem tiến trình.'
+                'message' => 'Đang chạy scraper (ẩn). Dùng "Chi tiết" để theo dõi.'
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    // Mở cửa sổ CMD hiển thị tiến trình (nút Chi tiết)
+    // Mở cửa sổ hiển thị tiến trình (Chỉ hoạt động khi chạy localhost trên máy tính cá nhân)
     public function fetchNewsDetails()
     {
         if (!Session::get('is_admin')) {
@@ -185,26 +189,22 @@ class AdminController extends Controller
         }
 
         try {
-            $batFile = 'd:\\DOANCN\\TT_Nhom8\\Tong_hop_news\\run_auto.bat';
-            // log trigger
-            try {
-                $triggerFile = base_path('Tong_hop_news/fetch_trigger.log');
-                file_put_contents($triggerFile, "[" . date('Y-m-d H:i:s') . "] fetchNewsDetails called\n", FILE_APPEND | LOCK_EX);
-            } catch (\Throwable $e) {
-            }
+            $scraperDir = realpath(base_path('..'));
+            $batFile = $scraperDir . DIRECTORY_SEPARATOR . 'run_auto.bat';
 
             if (PHP_OS_FAMILY === 'Windows') {
                 $batEsc = escapeshellarg($batFile);
-                // open visible cmd window (/k keeps it open)
-                $command = "start \"Scraper\" cmd /k $batEsc";
+                // Lệnh này sẽ mở một cửa sổ CMD mới (chỉ thấy được nếu bạn đang dùng localhost)
+                $command = "start \"Scraper Progress\" cmd /k $batEsc";
                 exec($command);
             } else {
-                $pythonDir = 'd:\\DOANCN\\TT_Nhom8\\Tong_hop_news';
-                $command = "cd $pythonDir && python main.py &";
+                // Linux thường không hỗ trợ mở cửa sổ GUI từ web server trực tiếp
+                $dirEsc = escapeshellarg($scraperDir);
+                $command = "cd $dirEsc && python3 main.py &";
                 exec($command);
             }
 
-            return response()->json(['success' => true, 'message' => 'Mở cửa sổ hiển thị tiến trình (CMD).']);
+            return response()->json(['success' => true, 'message' => 'Mở cửa sổ hiển thị tiến trình.']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
