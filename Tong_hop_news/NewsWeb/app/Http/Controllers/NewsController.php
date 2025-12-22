@@ -74,8 +74,9 @@ class NewsController extends Controller
         $article = Article::with(['source', 'categories', 'comments' => function($q) {
             $q->whereNull('parent_id')->orderBy('id', 'desc');
         }])->where('id', $id)->where('is_visible', true)->firstOrFail();
-        
-        return view('news.show', compact('article'));
+        $categories = Category::all();
+        $sources = Source::all();
+        return view('news.show', compact('article', 'categories', 'sources'));
     }
 
     // 5. Comment, Like, Tim

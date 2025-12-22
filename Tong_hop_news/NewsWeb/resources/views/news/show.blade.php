@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -12,94 +12,61 @@
     
     <style>
         :root { --primary: #ff6b00; --secondary: #2c3e50; --bg-gray: #f9f9f9; }
-        body { background-color: var(--bg-gray); font-family: 'Roboto', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
         
-        .main-container { max-width: 800px; margin: 30px auto; flex: 1; } /* flex: 1 để đẩy footer xuống đáy */
+        body { 
+            background-color: var(--bg-gray); 
+            font-family: 'Roboto', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            padding-top: 130px; /* Tăng padding để không bị che bởi navbar 2 dòng */
+        }
+        
+        /* --- CSS NAVBAR GIỐNG TRANG CHỦ --- */
+        .navbar { background: #fff; border-bottom: 3px solid var(--primary); height: auto; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px; border-bottom: 1px solid #eee; }
+        .header-bottom { width: 100%; padding: 0 20px; background: #fff; }
+        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.6rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; }
+        
+        .nav-menu { display: flex; align-items: center; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+        .nav-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 0.85rem; padding: 12px 15px; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
+        .nav-menu a:hover, .nav-menu a.active { color: var(--primary); border-bottom-color: var(--primary); background-color: #fffaf5; }
+
+        .search-form { position: relative; width: 220px; }
+        .search-input { border: 1px solid #ddd; border-radius: 20px; padding: 6px 15px 6px 35px; font-size: 0.85rem; width: 100%; background: #f9f9f9; transition: 0.3s; }
+        .search-icon-btn { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; border: none; background: none; pointer-events: none; }
+
+        /* --- NỘI DUNG BÀI VIẾT --- */
+        .main-container { max-width: 800px; margin: 30px auto; flex: 1; }
         .article-box { background: white; padding: 40px 50px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); }
-        
         .article-title { font-family: 'Merriweather', serif; font-size: 2.4rem; font-weight: 700; color: #222; line-height: 1.3; margin-bottom: 15px; }
-        
-        .article-meta { 
-            color: #777; font-size: 0.9rem; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px; 
-            display: flex; justify-content: space-between; align-items: center; 
-        }
-
-        /* NỘI DUNG CHÍNH */
-        .article-content { 
-            font-family: 'Merriweather', serif; font-size: 1.2rem; line-height: 1.8; color: #2a2a2a; text-align: justify; 
-        }
+        .article-meta { color: #777; font-size: 0.9rem; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+        .article-content { font-family: 'Merriweather', serif; font-size: 1.2rem; line-height: 1.8; color: #2a2a2a; text-align: justify; }
         .article-content img { max-width: 100%; height: auto; margin: 25px auto; display: block; border-radius: 4px; }
-        .article-content figure { margin: 30px auto; text-align: center; }
         
-        /* Chú thích ảnh */
-        .article-content figcaption { 
-            font-family: 'Roboto', sans-serif; font-size: 0.95rem; color: #222; background: #f0f0f0; 
-            padding: 10px 15px; margin-top: 10px; font-style: italic; border-radius: 0 0 5px 5px; 
-            border-top: 1px solid #ddd; line-height: 1.4;
-        }
-
         /* Tương tác */
         .action-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
         .btn-love-small { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e5e5e5; padding: 8px 16px; border-radius: 20px; color: #555; font-weight: 600; text-decoration: none; transition: 0.2s; }
         .comment-sec { margin-top: 20px; background: #fff; padding: 30px; border-radius: 8px; border-top: 4px solid var(--primary); }
         .btn-like { color: #666; font-size: 0.85rem; font-weight: 600; margin-right: 15px; text-decoration: none; }
-        .btn-back { color: #666; font-weight: 600; text-decoration: none; margin-bottom: 20px; display: inline-block; }
 
-        /* --- CSS FOOTER  --- */
-        .main-footer {
-            background-color: #080808ff;
-            color: #f4efefff;
-            padding-top: 60px;
-            margin-top: 80px;
-            font-size: 0.95rem;
-        }
-        .footer-brand {
-            color: var(--primary);
-            font-family: 'Merriweather', serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
+        /* Footer */
+        .main-footer { background-color: #080808ff; color: #f4efefff; padding-top: 60px; margin-top: 80px; font-size: 0.95rem; }
+        .footer-brand { color: var(--primary); font-family: 'Merriweather', serif; font-size: 1.8rem; font-weight: 900; text-decoration: none; display: inline-block; margin-bottom: 15px; }
         .footer-desc { line-height: 1.6; margin-bottom: 20px; }
-        .footer-title {
-            color: #fff;
-            font-weight: 700;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            position: relative;
-        }
-        .footer-title::after {
-            content: ''; position: absolute; left: 0; bottom: -8px;
-            width: 40px; height: 3px; background: var(--primary);
-        }
+        .footer-title { color: #fff; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; font-size: 1rem; position: relative; }
+        .footer-title::after { content: ''; position: absolute; left: 0; bottom: -8px; width: 40px; height: 3px; background: var(--primary); }
         .footer-links { list-style: none; padding: 0; }
-        .footer-links li { margin-bottom: 12px; }
         .footer-links a { color: #b0b0b0; text-decoration: none; transition: 0.2s; }
         .footer-links a:hover { color: var(--primary); padding-left: 5px; }
-        
-        .social-links a {
-            width: 38px; height: 38px;
-            background: rgba(255,255,255,0.1);
-            display: inline-flex; justify-content: center; align-items: center;
-            border-radius: 50%;
-            color: #fff;
-            margin-right: 10px;
-            transition: 0.3s;
-            text-decoration: none;
-        }
+        .social-links a { width: 38px; height: 38px; background: rgba(255,255,255,0.1); display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; color: #fff; margin-right: 10px; transition: 0.3s; text-decoration: none; }
         .social-links a:hover { background: var(--primary); transform: translateY(-3px); }
-        
-        .copyright {
-            background: #111;
-            padding: 20px 0;
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
+        .copyright { background: #111; padding: 20px 0; margin-top: 50px; text-align: center; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        @media (max-width: 768px) {
+            body { padding-top: 180px; }
+            .article-box { padding: 25px; }
+            .article-title { font-size: 1.8rem; }
         }
     </style>
 
@@ -111,29 +78,48 @@
             });
             form.style.display = (form.style.display === 'block') ? 'none' : 'block';
         }
-        
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const contentDiv = document.querySelector('.article-content');
-            if (contentDiv) {
-                const firstImageOrFigure = contentDiv.querySelector('img, figure'); 
-                if (firstImageOrFigure) firstImageOrFigure.remove();
-            }
-        });
     </script>
 </head>
 <body>
 
-    <nav class="navbar navbar-light bg-white shadow-sm mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ url('/') }}" style="color: var(--primary); font-size: 1.5rem;">
-                <i class="fas fa-paw"></i> BÁO ĐỐM
-            </a>
+    @php
+        $icons = [
+            'Chính trị - Xã hội' => 'fa-landmark', 'Kinh doanh' => 'fa-chart-line', 'Giáo dục' => 'fa-graduation-cap',
+            'Thể thao' => 'fa-futbol', 'Pháp luật' => 'fa-gavel',
+            'Giải trí' => 'fa-music', 'Công nghệ' => 'fa-microchip',
+            'Sức khỏe' => 'fa-heartbeat', 'Đời sống' => 'fa-coffee',
+        ];
+    @endphp
+
+    <nav class="navbar fixed-top">
+        <div class="header-top">
+            <a href="{{ url('/') }}" class="brand-logo"><i class="fas fa-paw brand-icon me-2"></i>BÁO ĐỐM</a>
+
+            <form action="{{ route('news.index') }}" method="GET" class="search-form">
+                <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
+                <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
+            </form>
+        </div>
+
+        <div class="header-bottom">
+            <div class="nav-menu">
+                <a href="{{ url('/') }}">
+                    <i class="fas fa-home me-1"></i> Tất cả
+                </a>
+                @if(isset($categories))
+                    @foreach($categories as $cat)
+                        <a href="{{ route('news.category', $cat->id) }}" 
+                           class="{{ (isset($currentCategory) && $currentCategory->id == $cat->id) ? 'active' : '' }}">
+                           <i class="fas {{ $icons[$cat->name] ?? 'fa-folder' }} me-2 opacity-75"></i>
+                           {{ $cat->name }}
+                        </a>
+                    @endforeach
+                @endif
+            </div>
         </div>
     </nav>
 
     <div class="container main-container">
-        <a href="{{ url('/') }}" class="btn-back"><i class="fas fa-arrow-left"></i> Quay lại trang chủ</a>
-
         <div class="article-box">
             <div class="mb-3">
                 <span class="badge bg-danger">{{ $article->source->name ?? 'Tổng hợp' }}</span>
@@ -223,53 +209,31 @@
         </div>
     </div>
 
-    <footer class="main-footer">
+     <footer class="main-footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-5 mb-4">
                     <a href="{{ url('/') }}" class="footer-brand"><i class="fas fa-paw"></i> BÁO ĐỐM</a>
-                    <p class="footer-desc">
-                        Hệ thống tổng hợp tin tức tự động thông minh, mang đến cho bạn những thông tin nóng hổi, chính xác và đa chiều nhất từ các nguồn báo chí uy tín hàng đầu Việt Nam.
-                    </p>
+                    <p class="footer-desc">Hệ thống tổng hợp tin tức tự động thông minh, mang đến cho bạn những thông tin nóng hổi, chính xác và đa chiều nhất từ các nguồn báo chí uy tín hàng đầu Việt Nam.</p>
                     <div class="social-links mt-3">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                         <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/?lang=vi"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+
                     </div>
                 </div>
-
-               
-
-                <div class="col-md-4 mb-4 text-md">
+                <div class="col-md-4 mb-4">
                     <h5 class="footer-title">Liên Hệ Nhóm 8</h5>
                     <ul class="footer-links">
                         <li><i class="fas fa-map-marker-alt me-2 text-warning"></i> Đại học Công Nghệ TP.HCM</li>
                         <li><i class="fas fa-envelope me-2 text-warning"></i> contact@baodom.com</li>
-                        <li><i class="fas fa-phone-alt me-2 text-warning"></i> (028) 1234 5678</li>
                     </ul>
-                    <div class="mt-3">
-                        <span class="d-block text-white mb-2 fw-bold">Đăng ký nhận tin:</span>
-                        <div class="input-group">
-                            <input type="email" class="form-control form-control-sm" placeholder="Email của bạn...">
-                            <button class="btn btn-primary btn-sm" style="background: var(--primary); border: none;">Gửi</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
         <div class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-md-start">
-                        © 2025 <strong>Báo Đốm</strong>. All Rights Reserved.
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <a href="#" class="text-white text-decoration-none mx-2 small">Điều khoản</a>
-                        <a href="#" class="text-white text-decoration-none mx-2 small">Bảo mật</a>
-                    </div>
-                </div>
-            </div>
+            <div class="container">© 2025 <strong>Báo Đốm</strong>. All Rights Reserved.</div>
         </div>
     </footer>
 

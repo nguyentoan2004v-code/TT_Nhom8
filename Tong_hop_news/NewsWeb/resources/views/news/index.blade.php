@@ -11,32 +11,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-
         :root { --primary: #ff6b00; --secondary: #2c3e50; --bg-gray: #f7f7f7; }
         
         body { 
             font-family: 'Roboto', sans-serif; 
             background-color: var(--bg-gray); 
             color: #333; 
-            padding-top: 80px;
+            /* Tăng padding-top vì navbar 2 dòng sẽ cao hơn */
+            padding-top: 130px; 
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Navbar */
-        .navbar { background: #fff; border-bottom: 3px solid var(--primary); height: 70px; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .header-container { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; width: 100%; padding: 0 20px; }
+        /* Navbar chính */
+        .navbar { background: #fff; border-bottom: 3px solid var(--primary); height: auto; padding: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         
-        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.6rem; color: var(--primary); text-decoration: none; margin-right: 30px; white-space: nowrap; display: flex; align-items: center; flex: 0 0 auto; }
+        /* Dòng 1: Logo & Search & Admin */
+        .header-top { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 10px 20px; border-bottom: 1px solid #eee; }
         
-        /* Nav menu: allow horizontal scrolling when items overflow */
-        .nav-menu { flex: 1 1 auto; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; scrollbar-width: none; height: 70px; margin-right: 20px; display: flex; align-items: center; }
-        .nav-menu::-webkit-scrollbar { display: none; }
-        .nav-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 0.9rem; padding: 0 15px; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
+        /* Dòng 2: Danh mục */
+        .header-bottom { width: 100%; padding: 0 20px; background: #fff; }
+
+        .brand-logo { font-family: 'Merriweather', serif; font-weight: 900; font-size: 1.6rem; color: var(--primary); text-decoration: none; display: flex; align-items: center; }
+        
+        
+        .nav-menu { display: flex; align-items: center; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+        .nav-menu a { text-decoration: none; color: #444; font-weight: 600; font-size: 0.85rem; padding: 12px 15px; display: flex; align-items: center; border-bottom: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
         .nav-menu a:hover, .nav-menu a.active { color: var(--primary); border-bottom-color: var(--primary); background-color: #fffaf5; }
 
-        .search-form { flex: 0 0 auto; position: relative; width: 220px; }
+        .search-form { position: relative; width: 220px; }
         .search-input { border: 1px solid #ddd; border-radius: 20px; padding: 6px 15px 6px 35px; font-size: 0.85rem; width: 100%; background: #f9f9f9; transition: 0.3s; }
         .search-icon-btn { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; border: none; background: none; pointer-events: none; }
 
@@ -45,7 +49,6 @@
         .section-title { font-weight: 800; color: #222; border-left: 5px solid var(--primary); padding-left: 15px; margin: 10px 0 25px; text-transform: uppercase; font-size: 1.1rem; }
         .news-card { background: #fff; border: none; border-radius: 10px; overflow: hidden; transition: transform 0.3s; height: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
         .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-
         .card-img-wrap { position: relative; padding-top: 60%; overflow: hidden; background: #eee; }
         .card-img-top { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
         .news-card:hover .card-img-top { transform: scale(1.1); }
@@ -69,82 +72,28 @@
         .sidebar-head { font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-left: 4px solid var(--primary); padding-left: 10px; margin-bottom: 15px; color: #222; }
         .list-vertical li a { text-decoration: none; color: #555; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
         
-        /* Admin greeting */
-        .admin-greeting {
-            color: var(--secondary);
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .admin-greeting i {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .admin-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .admin-greeting { color: var(--secondary); font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .admin-greeting i { color: var(--primary); font-size: 1.1rem; }
+        .admin-controls { display: flex; align-items: center; gap: 10px; }
         
-        /* --- CSS FOOTER MỚI --- */
-        .main-footer {
-            background-color: #1a1a1a;
-            color: #b0b0b0;
-            padding-top: 60px;
-            margin-top: 80px;
-            font-size: 0.95rem;
-        }
-        .footer-brand {
-            color: var(--primary);
-            font-family: 'Merriweather', serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
+        /* Footer */
+        .main-footer { background-color: #1a1a1a; color: #b0b0b0; padding-top: 60px; margin-top: 80px; font-size: 0.95rem; }
+        .footer-brand { color: var(--primary); font-family: 'Merriweather', serif; font-size: 1.8rem; font-weight: 900; text-decoration: none; display: inline-block; margin-bottom: 15px; }
         .footer-desc { line-height: 1.6; margin-bottom: 20px; }
-        .footer-title {
-            color: #fff;
-            font-weight: 700;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            position: relative;
-        }
-        .footer-title::after {
-            content: ''; position: absolute; left: 0; bottom: -8px;
-            width: 40px; height: 3px; background: var(--primary);
-        }
+        .footer-title { color: #fff; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; font-size: 1rem; letter-spacing: 0.5px; position: relative; }
+        .footer-title::after { content: ''; position: absolute; left: 0; bottom: -8px; width: 40px; height: 3px; background: var(--primary); }
         .footer-links { list-style: none; padding: 0; }
         .footer-links li { margin-bottom: 12px; }
         .footer-links a { color: #b0b0b0; text-decoration: none; transition: 0.2s; }
         .footer-links a:hover { color: var(--primary); padding-left: 5px; }
-        
-        .social-links a {
-            width: 38px; height: 38px;
-            background: rgba(255,255,255,0.1);
-            display: inline-flex; justify-content: center; align-items: center;
-            border-radius: 50%;
-            color: #fff;
-            margin-right: 10px;
-            transition: 0.3s;
-            text-decoration: none;
-        }
+        .social-links a { width: 38px; height: 38px; background: rgba(255,255,255,0.1); display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; color: #fff; margin-right: 10px; transition: 0.3s; text-decoration: none; }
         .social-links a:hover { background: var(--primary); transform: translateY(-3px); }
-        
-        .copyright {
-            background: #111;
-            padding: 20px 0;
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
+        .copyright { background: #111; padding: 20px 0; margin-top: 50px; text-align: center; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        @media (max-width: 992px) {
+            body { padding-top: 180px; }
+            .header-top { flex-wrap: wrap; gap: 10px; }
+            .search-form { width: 100%; order: 3; }
         }
     </style>
 </head>
@@ -164,9 +113,33 @@
     @endphp
 
     <nav class="navbar fixed-top">
-        <div class="header-container">
+        <div class="header-top">
             <a href="{{ url('/') }}" class="brand-logo"><i class="fas fa-paw brand-icon me-2"></i>BÁO ĐỐM</a>
 
+            <div class="d-flex align-items-center gap-3 flex-grow-1 justify-content-end">
+                <form action="{{ route('news.index') }}" method="GET" class="search-form">
+                    <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
+                    <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
+                </form>
+
+                <div class="admin-controls">
+                    @if(session('is_admin'))
+                        <div class="admin-greeting d-none d-md-flex">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Chào, {{ session('user_name') }}</span>
+                        </div>
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-primary" title="Quản trị"><i class="fas fa-cogs"></i></a>
+                        <a href="{{ route('admin.logout') }}" class="btn btn-sm btn-danger" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></a>
+                    @else
+                        <a href="{{ route('admin.login') }}" class="btn btn-sm btn-outline-primary" title="Đăng nhập quản trị">
+                            <i class="fas fa-user-shield"></i> Admin
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="header-bottom">
             <div class="nav-menu">
                 <a href="{{ url('/') }}" class="{{ !isset($currentCategory) && !isset($currentSource) ? 'active' : '' }}">
                     <i class="fas fa-home me-1"></i> Tất cả
@@ -181,56 +154,11 @@
                     @endforeach
                 @endif
             </div>
-
-            <form action="{{ route('news.index') }}" method="GET" class="search-form">
-                <button type="submit" class="search-icon-btn"><i class="fas fa-search"></i></button>
-                <input type="text" name="search" class="search-input" placeholder="Tìm kiếm..." value="{{ request('search') }}">
-            </form>
-
-            {{-- Admin button: hiện nút Đăng nhập nếu chưa đăng nhập admin, hiện Admin/Đăng xuất nếu đã đăng nhập --}}
-            <div class="admin-controls">
-                @if(session('is_admin'))
-                    <div class="admin-greeting">
-                        <i class="fas fa-user-tie"></i>
-                        <span>Xin chào, {{ session('user_name') }}</span>
-                    </div>
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-primary" title="Quản trị" aria-label="Quản trị">
-                        <i class="fas fa-cogs"></i> Quản lý
-                    </a>
-                    <a href="{{ route('admin.logout') }}" class="btn btn-sm btn-danger" title="Đăng xuất" aria-label="Đăng xuất">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </a>
-                @else
-                    <a href="{{ route('admin.login') }}" class="btn btn-sm btn-primary" title="Quản trị" aria-label="Quản trị">
-                        <i class="fas fa-user-shield"></i>
-                    </a>
-                @endif
-            </div>
-
-            <style>
-                /* Admin controls (icon buttons) in header */
-                .admin-controls { flex: 0 0 auto; margin-left: 12px; display: flex; align-items: center; gap: 8px; }
-                .nav-menu::-webkit-scrollbar { height: 6px; }
-                .nav-menu::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 6px; }
-                /* Thanh trượt nằm dưới navbar để kéo ngang danh mục */
-                .nav-range-wrap { position: fixed; top: 70px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: auto; z-index: 60; padding: 4px 0; }
-                .nav-range { -webkit-appearance: none; appearance: none; width: 50%; height: 4px; border-radius: 4px; background: #dcdcdc; outline: none; }
-                .nav-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.12); border: 2px solid #888888; cursor: pointer; }
-                .nav-range::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.12); border: 2px solid #888888; cursor: pointer; }
-                @media (max-width: 768px) { .nav-range { width: 76%; } }
-                @media (max-width: 480px) { .nav-range-wrap { display: none; } }
-            </style>
         </div>
     </nav>
 
-    {{-- Range slider dưới navbar để kéo ngang danh mục (hiển thị khi overflow) --}}
-    <div class="nav-range-wrap">
-        <input class="nav-range" type="range" min="0" max="100" value="0" aria-label="Trượt danh mục">
-    </div>
-
     <div class="container mt-4 main-content-wrap">
         <div class="row">
-            
             <div class="col-lg-9">
                 <div class="section-title">
                     @if(isset($currentSource)) <i class="fas fa-newspaper me-2"></i>Tin từ: <span class="text-danger">{{ $currentSource->name }}</span>
@@ -242,7 +170,6 @@
                 @if(isset($articles) && $articles->count() > 0)
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                         @foreach ($articles as $article)
-                        
                         @php
                             $firstCat = $article->categories->first();
                             $catName = $firstCat ? $firstCat->name : 'Tin tức';
@@ -250,15 +177,12 @@
                             $bgClass = $fallbackColors[$catName] ?? 'bg-default';
                             $finalImageUrl = !empty($article->image_url) ? $proxyUrl . urlencode($article->image_url) : null;
                         @endphp
-
                         <div class="col">
                             <div class="news-card h-100">
                                 <div class="card-img-wrap">
                                     <a href="{{ route('news.show', $article->id) }}">
                                         @if($finalImageUrl)
-                                            <img src="{{ $finalImageUrl }}" class="card-img-top" 
-                                                 onerror="this.style.display='none'; document.getElementById('fallback-home-{{$article->id}}').style.display='flex'">
-                                            
+                                            <img src="{{ $finalImageUrl }}" class="card-img-top" onerror="this.style.display='none'; document.getElementById('fallback-home-{{$article->id}}').style.display='flex'">
                                             <div id="fallback-home-{{$article->id}}" class="card-img-top fallback-img {{ $bgClass }}" style="display:none;">
                                                 <i class="fas {{ $iconClass }} fa-3x mb-2 opacity-50"></i>
                                                 <span class="small fw-bold text-uppercase opacity-75">{{ $catName }}</span>
@@ -272,7 +196,6 @@
                                     </a>
                                     <span class="source-tag">{{ $article->source->name ?? 'News' }}</span>
                                 </div>
-
                                 <div class="card-body">
                                     <h5 class="news-title">
                                         <a href="{{ route('news.show', $article->id) }}">
@@ -296,10 +219,9 @@
             </div>
 
             <div class="col-lg-3 ps-lg-4">
-                <div class="sticky-top" style="top: 100px;">
+                <div class="sticky-top" style="top: 130px;">
                     <div class="sidebar-box">
                         <div class="sidebar-head">Nguồn Báo</div>
-                        
                         @if(isset($sources) && $sources->count() > 0)
                             <ul class="list-vertical m-0 p-0">
                                 <li>
@@ -316,20 +238,15 @@
                                 </li>
                                 @endforeach
                             </ul>
-                        @else
-                            <p class="text-muted small">Đang cập nhật nguồn...</p>
                         @endif
                     </div>
-
                     <div class="sidebar-box text-center text-white" style="background: linear-gradient(45deg, #ff6b00, #e67e22); border:none;">
                         <i class="fas fa-mobile-alt fa-2x mb-2"></i>
                         <h6 class="fw-bold">App Báo Đốm</h6>
                         <button class="btn btn-sm btn-light w-100 fw-bold text-warning mt-2">Tải Ngay</button>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -338,90 +255,28 @@
             <div class="row">
                 <div class="col-md-5 mb-4">
                     <a href="{{ url('/') }}" class="footer-brand"><i class="fas fa-paw"></i> BÁO ĐỐM</a>
-                    <p class="footer-desc">
-                        Hệ thống tổng hợp tin tức tự động thông minh, mang đến cho bạn những thông tin nóng hổi, chính xác và đa chiều nhất từ các nguồn báo chí uy tín hàng đầu Việt Nam.
-                    </p>
+                    <p class="footer-desc">Hệ thống tổng hợp tin tức tự động thông minh, mang đến cho bạn những thông tin nóng hổi, chính xác và đa chiều nhất từ các nguồn báo chí uy tín hàng đầu Việt Nam.</p>
                     <div class="social-links mt-3">
-                        <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.facebook.com/"><i class="fab fa-twitter"></i></a>
+                         <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://x.com/?lang=vi"><i class="fab fa-twitter"></i></a>
                         <a href="https://www.youtube.com/"><i class="fab fa-youtube"></i></a>
                         <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+
                     </div>
                 </div>
-
-                
-
                 <div class="col-md-4 mb-4">
                     <h5 class="footer-title">Liên Hệ Nhóm 8</h5>
                     <ul class="footer-links">
                         <li><i class="fas fa-map-marker-alt me-2 text-warning"></i> Đại học Công Nghệ TP.HCM</li>
                         <li><i class="fas fa-envelope me-2 text-warning"></i> contact@baodom.com</li>
-                        <li><i class="fas fa-phone-alt me-2 text-warning"></i> (039) 6046 671</li>
                     </ul>
-                    
                 </div>
             </div>
         </div>
         <div class="copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-md-start">
-                        © 2025 <strong>Báo Đốm</strong>. All Rights Reserved.
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <a href="#" class="text-white text-decoration-none mx-2 small">Điều khoản</a>
-                        <a href="#" class="text-white text-decoration-none mx-2 small">Bảo mật</a>
-                    </div>
-                </div>
-            </div>
+            <div class="container">© 2025 <strong>Báo Đốm</strong>. All Rights Reserved.</div>
         </div>
     </footer>
 
 </body>
 </html>
-
-    <script>
-        // Đồng bộ thanh trượt với .nav-menu
-        (function(){
-            const slider = document.querySelector('.nav-menu');
-            const range = document.querySelector('.nav-range');
-            if(!slider || !range) return;
-
-            const maxScroll = ()=> Math.max(0, slider.scrollWidth - slider.clientWidth);
-
-            const updateRangeFromScroll = ()=>{
-                const max = maxScroll();
-                if(max <= 0){ range.style.display = 'none'; return; }
-                range.style.display = 'block';
-                range.value = Math.round((slider.scrollLeft / max) * 100) || 0;
-            };
-
-            const updateScrollFromRange = ()=>{
-                const max = maxScroll();
-                const left = Math.round((Number(range.value || 0) / 100) * max);
-                slider.scrollLeft = left;
-            };
-
-            // range -> scroll
-            range.addEventListener('input', updateScrollFromRange);
-
-            // scroll -> range
-            slider.addEventListener('scroll', updateRangeFromScroll);
-
-            // touch/drag support preserved (user can still drag nav to scroll)
-            let isDown = false, startX = 0, scrollLeft = 0;
-            slider.addEventListener('mousedown', (e)=>{ isDown = true; slider.classList.add('active'); startX = e.pageX - slider.getBoundingClientRect().left; scrollLeft = slider.scrollLeft; });
-            window.addEventListener('mouseup', ()=>{ isDown = false; slider.classList.remove('active'); });
-            slider.addEventListener('mousemove', (e)=>{ if(!isDown) return; e.preventDefault(); const x = e.pageX - slider.getBoundingClientRect().left; const walk = (x - startX) * 1.2; slider.scrollLeft = scrollLeft - walk; });
-            slider.addEventListener('mouseleave', ()=>{ isDown = false; slider.classList.remove('active'); });
-
-            // touch
-            slider.addEventListener('touchstart', (e)=>{ startX = e.touches[0].pageX - slider.getBoundingClientRect().left; scrollLeft = slider.scrollLeft; });
-            slider.addEventListener('touchmove', (e)=>{ const x = e.touches[0].pageX - slider.getBoundingClientRect().left; const walk = (x - startX) * 1.2; slider.scrollLeft = scrollLeft - walk; });
-
-            // update on load/resize
-            window.addEventListener('resize', updateRangeFromScroll);
-            document.addEventListener('DOMContentLoaded', updateRangeFromScroll);
-            setTimeout(updateRangeFromScroll, 200);
-        })();
-    </script>
