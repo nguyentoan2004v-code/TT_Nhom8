@@ -328,32 +328,76 @@
         }
 
         /* Footer */
-        .main-footer {
-            background-color: #1a1a1a;
-            color: #b0b0b0;
-            padding-top: 60px;
-            margin-top: 80px;
-            font-size: 0.95rem;
-        }
+        
+/* Footer tối màu đồng bộ với trang chủ */
+.main-footer {
+    background-color: #1a1a1a;
+    color: #b0b0b0;
+    padding-top: 60px;
+    margin-top: 80px;
+    font-size: 0.95rem;
+}
 
-        .footer-brand {
-            color: var(--primary);
-            font-family: 'Merriweather', serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
+.footer-brand {
+    color: var(--primary);
+    font-family: 'Merriweather', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+}
 
-        .copyright {
-            background: #111;
-            padding: 20px 0;
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
+.footer-title { 
+    color: #fff; 
+    font-weight: 700; 
+    margin-bottom: 25px; 
+    text-transform: uppercase; 
+    font-size: 1rem; 
+}
+
+.footer-links { list-style: none; padding: 0; }
+.footer-links li { margin-bottom: 12px; }
+.footer-links a { 
+    color: #b0b0b0; 
+    text-decoration: none; 
+    transition: 0.3s; 
+}
+
+.footer-links a:hover { 
+    color: var(--primary); 
+    padding-left: 5px; 
+}
+
+.footer-desc { line-height: 1.8; }
+
+.social-links a {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 10px;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.social-links a:hover { 
+    background: var(--primary); 
+    transform: translateY(-3px); 
+}
+
+.copyright {
+    background: #111;
+    padding: 20px 0;
+    margin-top: 50px;
+    text-align: center;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
     </style>
 </head>
 <body>
@@ -499,30 +543,34 @@
     <div class="alert-box" id="alertBox"></div>
 
     <footer class="main-footer">
-        <div class="container py-5">
-            <div class="row">
-                <div class="col-md-4">
-                    <a href="{{ url('/') }}" class="footer-brand"><i class="fas fa-paw"></i>BÁO ĐỐM</a>
-                    <p class="footer-desc">Nền tảng tin tức số 1 Việt Nam - Nhanh, chính xác, toàn diện.</p>
-                </div>
-                <div class="col-md-4 text-center">
-                    <h6 class="footer-title">Liên kết nhanh</h6>
-                    <ul class="footer-links">
-                        <li><a href="{{ url('/') }}">Trang chủ</a></li>
-                        <li><a href="{{ route('admin.logout') }}">Quản lý</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 text-end">
-                    <h6 class="footer-title">Kết nối</h6>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{{ url('/') }}" class="footer-brand">
+                    <i class="fas fa-paw"></i> BÁO ĐỐM
+                </a>
+                <p class="footer-desc">Hệ thống tổng hợp tin tức tự động thông minh, mang đến cho bạn những thông tin nóng hổi, chính xác và đa chiều nhất từ các nguồn báo chí uy tín hàng đầu Việt Nam.</p>
             </div>
+
+            <div class="col-md-4 text-center">
+                <h6 class="footer-title">Điều hướng nhanh</h6>
+                <ul class="footer-links">
+                    <li>
+                        <a href="{{ url('/') }}">
+                            <i class="fas fa-home me-2"></i> Quay lại Trang chủ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            
         </div>
-        <div class="copyright">&copy; 2025 Báo Đốm. All rights reserved.</div>
-    </footer>
+    </div>
+    
+    <div class="copyright">
+        &copy; 2025 <strong>Báo Đốm</strong>. All rights reserved.
+    </div>
+</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
